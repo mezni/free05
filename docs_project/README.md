@@ -35,3 +35,19 @@ These KPIs are just examples and may vary depending on your organization's speci
 
 
 source -> convertor -> splitter -> embeder -> writer (store)
+
+
+You can use tools like:
+
+    Natural Language Processing (NLP) for document analysis
+    Machine Learning (ML) for pattern recognition and anomaly detection
+    Generative AI for summarization and insights
+
+Some potential use cases:
+
+    Entity extraction (e.g., identifying systems, components, and relationships)
+    Document classification and tagging
+    Compliance checking against standards or best practices
+    Summarization and risk identification
+
+What specific aspects of the review process are you looking to automate? 
