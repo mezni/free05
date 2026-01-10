@@ -32,3 +32,6 @@ Here's a list of common IT architecture documents and their corresponding KPIs (
         KPI: % of projects within budget
 
 These KPIs are just examples and may vary depending on your organization's specific needs and 
+
+
+source -> convertor -> splitter -> embeder -> writer (store)
