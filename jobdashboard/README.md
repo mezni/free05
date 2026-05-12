@@ -7,4 +7,4 @@ python indeed_ca_scraper.py --query "data analyst" --location "Vancouver, BC" --
 # Full-time jobs posted in last 7 days
 python indeed_ca_scraper.py --query "nurse" --location "Calgary, AB" --date-posted 7 --job-type fulltime --pages 3
 
-# 
+##  
