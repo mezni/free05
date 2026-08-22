@@ -14,9 +14,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
 LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT")
-
-# Enable LangSmith tracing
-LANGCHAIN_TRACING_V2 = "true"
+LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2")
 
 
 # --------------------------------------------------
