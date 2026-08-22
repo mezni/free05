@@ -4,7 +4,7 @@ langchain
 langchain_openai
 
 streamlit
-
+ruff
 #langchain-core
 #langchain-community
 #langchain-text-splitters

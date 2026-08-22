@@ -24,10 +24,7 @@ LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2")
 st.title("LangChain Chatbot")
 
 # Get the user's question
-input_text = st.text_input(
-    "Ask a question",
-    placeholder="Enter your question..."
-)
+input_text = st.text_input("Ask a question", placeholder="Enter your question...")
 
 
 # --------------------------------------------------
@@ -38,13 +35,9 @@ prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            "You are a helpful assistant. "
-            "Please respond to the user's queries."
+            "You are a helpful assistant. Please respond to the user's queries.",
         ),
-        (
-            "user",
-            "Question: {question}"
-        ),
+        ("user", "Question: {question}"),
     ]
 )
 
