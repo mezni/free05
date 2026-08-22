@@ -1,7 +1,8 @@
 python-dotenv
 
-openai
 langchain
+langchain_openai
+
 streamlit
 
 #langchain-core
