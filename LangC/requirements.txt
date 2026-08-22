@@ -2,6 +2,10 @@ python-dotenv
 
 langchain
 langchain_openai
+langserve
+fastapi
+uvicorn
+sse-starlette
 
 streamlit
 ruff
