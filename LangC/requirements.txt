@@ -10,6 +10,7 @@ sse-starlette
 
 streamlit
 ruff
+bs4 
 
 #langchain-core
 #langchain-text-splitters
