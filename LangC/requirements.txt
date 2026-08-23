@@ -1,6 +1,7 @@
 python-dotenv
 
 langchain
+langchain-community
 langchain_openai
 langserve
 fastapi
@@ -9,7 +10,7 @@ sse-starlette
 
 streamlit
 ruff
+
 #langchain-core
-#langchain-community
 #langchain-text-splitters
 #langchain-openai
