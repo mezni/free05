@@ -1,13 +1,14 @@
 python-dotenv
 
 langchain
-langchain-
 langchain-text-splitters
 langchain_openai
+langchain-chroma
 langserve
 fastapi
 uvicorn
 sse-starlette
+faiss-cpu 
 
 streamlit
 ruff
