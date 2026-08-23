@@ -1,7 +1,8 @@
 python-dotenv
 
 langchain
-langchain-community
+langchain-
+langchain-text-splitters
 langchain_openai
 langserve
 fastapi
@@ -11,7 +12,7 @@ sse-starlette
 streamlit
 ruff
 bs4 
+pypdf
 
 #langchain-core
-#langchain-text-splitters
 #langchain-openai
