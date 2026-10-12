@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Goal:** Turn the ticket classifier into a production-ready, maintainable component with deterministic behavior
   - **Solution:** Enhanced classification logic with explicit keyword priority (refund/dispute > order lookup), confidence scoring (0.60–0.98), operational flags (`needs_human_review`, `needs_order_lookup`), and audit assumptions list; updated data contracts (`src/ai_agent/models.py`) and classification logic (`src/ai_agent/classifier.py`); comprehensive test suite (`tests/test_classifier.py` + `tests/test_contract.py`)
   - **Trade-off:** Expanded rule-based logic with explicit precedence vs. ML classifier — chosen for deterministic behavior, clear audit trails, and immediate implementability without training data
+- **Issue:** Operational metadata now captures text length, word count, and regex match status instead of raw customer text
+  - **Goal:** Privacy-compliant telemetry that preserves structural metrics while excluding PII
+  - **Solution:** Introduced `OperationalMetadata` model (`text_length`, `word_count`, `has_order_id_pattern`); classifier constructs metadata from validated text and logs only structural metrics; `test_rule_5_operational_metadata_logging` verifies no raw message leakage
+  - **Trade-off:** Added intermediate model layer vs. flat output — chosen for privacy compliance and separation of concerns
 
 ---
 
