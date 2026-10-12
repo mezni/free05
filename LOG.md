@@ -36,3 +36,24 @@ My order #4821 has not arrived.
 - **Problem:** Incoming payloads contained unexpected dictionary keys, missing required fields, or invalid empty string values, leading to unhandled runtime exceptions inside downstream domain logic.
 - **Solution:** Introduced `RawTicketInput` using Pydantic with `extra="ignore"` to strip unexpected keys, added custom field validators to reject empty/whitespace-only input strings, and implemented unit test coverage (`test_contract.py`) for schema validation failures.
 - **Trade-off:** Pydantic v2 strict mode vs. flexibility — chosen for runtime safety and clear error messages.
+
+### Implement Robust & Maintainable Ticket Classification
+- **Goal:** Turn the ticket classifier into a production-ready, maintainable component that handles edge cases, ambiguous inputs, and malformed payloads deterministically.
+- **Problem:** Rule-based keyword checks break down when messages lack IDs ("Where is my order?"), overlap multiple categories ("I need a refund for order #4821"), or arrive with invalid types/empty strings, causing silent bugs or unhandled runtime failures.
+- **Solution:** Enhanced classification logic to rank intent confidence, default ambiguous multi-category tickets to actionable categories based on explicit precedence rules (e.g., refund/dispute > order lookup), and expose confidence scores alongside operational flags (`needs_human_review`, `needs_order_lookup`). Updated data contracts in `src/ai_agent/models.py` to include confidence scoring and review flags; implemented robust classification logic in `src/ai_agent/classifier.py` with explicit keyword priority and assumption logging; comprehensive unit test suite in `tests/test_classifier.py` covering edge cases and ambiguity scenarios.
+- **Trade-off:** Expanded rule-based logic vs. ML classifier — chosen for deterministic behavior, clear audit trails (assumptions list), and immediate implementability without training data.
+
+**Input (examples):**
+- "Where is my order?" → ORDER_STATUS, low confidence, needs human review
+- "I need a refund for order #4821" → REFUND_DISPUTE, order_id extracted, no review needed
+- "My order #4821 has not arrived." → ORDER_STATUS, high confidence, needs lookup
+
+**Expected output structure:**
+{
+  "category": "order_status",
+  "confidence": 0.98,
+  "order_id": "4821",
+  "needs_order_lookup": true,
+  "needs_human_review": false,
+  "assumptions": ["Precedence rule: Refund intent prioritized over general order query."]
+}

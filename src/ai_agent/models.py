@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 class TicketCategory(str, Enum):
     ORDER_STATUS = "order_status"
+    REFUND_DISPUTE = "refund_dispute"
     TECHNICAL_SUPPORT = "technical_support"
     GENERAL_INQUIRY = "general_inquiry"
 
@@ -32,5 +33,8 @@ class TicketClassification(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     category: TicketCategory
-    order_id: str | None = None
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Classification confidence")
+    order_id: str | None = Field(default=None, description="Extracted order ID")
     needs_order_lookup: bool = False
+    needs_human_review: bool = False
+    assumptions: list[str] = Field(default_factory=list, description="Audit trace of logic flags")

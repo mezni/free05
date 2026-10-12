@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Issue:** Incoming payloads contained unexpected keys, missing required fields, or invalid empty string values, causing unhandled runtime exceptions
   - **Goal:** Ensure raw incoming payload dictionaries are reliably validated, sanitized, and typed before entering the agent's execution pipeline
   - **Solution:** Introduced `RawTicketInput` using Pydantic with `extra="ignore"` to strip unexpected keys, added custom field validators to reject empty/whitespace-only input strings, and implemented unit test coverage (`test_contract.py`) for schema validation failures
+- **Issue:** Rule-based keyword checks break down with ambiguous inputs, missing IDs, or overlapping categories
+  - **Goal:** Turn the ticket classifier into a production-ready, maintainable component with deterministic behavior
+  - **Solution:** Enhanced classification logic with explicit keyword priority (refund/dispute > order lookup), confidence scoring (0.60–0.98), operational flags (`needs_human_review`, `needs_order_lookup`), and audit assumptions list; updated data contracts (`src/ai_agent/models.py`) and classification logic (`src/ai_agent/classifier.py`); comprehensive test suite (`tests/test_classifier.py` + `tests/test_contract.py`)
+  - **Trade-off:** Expanded rule-based logic with explicit precedence vs. ML classifier — chosen for deterministic behavior, clear audit trails, and immediate implementability without training data
 
 ---
 
