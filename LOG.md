@@ -14,3 +14,19 @@
 1. Define project objectives and tech stack
 2. Implement core agent architecture
 3. Set up tool calling and API integration patterns
+
+### Problem to Solve
+- **Goal:** Classify support tickets and return structured results
+- **Problem:** A support ticket arrives as plain text. Program must classify it and return structured result.
+- **Solution:** Implement ticket classification logic that extracts category, order ID, and lookup needs.
+- **Trade-off:** Rule-based vs. ML classification — chosen for simplicity and determinism.
+
+**Input:**
+My order #4821 has not arrived.
+
+**Expected output:**
+{
+  "category": "order_status",
+  "order_id": "4821",
+  "needs_order_lookup": true
+}

@@ -14,9 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Modification]: Adjustments to prompts, temperature settings, or tool definitions.
 
 ### Fixed & Resolved (Problem -> Solution Log)
-- **Issue:** [Describe problem, e.g., Agent getting stuck in tool execution loop]
-  - **Goal:** [What was intended]
-  - **Solution:** [How it was fixed, e.g., Added maximum iteration guardrails and updated retry prompt]
+- **Issue:** Support ticket classification — plain text tickets must be classified into structured results
+  - **Goal:** Extract category, order ID, and lookup needs from support tickets
+  - **Solution:** Implemented rule-based ticket classifier with regex order ID extraction and keyword-based categorization
+- **Issue:** Module import failure — `ai-agent` package name conflict prevented `from ai_agent.runner import run_pipeline`
+  - **Goal:** Resolve ModuleNotFoundError and enable `uv run python main.py` to work
+  - **Solution:** Renamed `src/ai-agent` → `src/ai_agent`, updated `pyproject.toml` name field, and fixed Hatchling package discovery config
 
 ---
 
