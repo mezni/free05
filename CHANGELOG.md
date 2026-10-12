@@ -31,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Goal:** Privacy-compliant telemetry that preserves structural metrics while excluding PII
   - **Solution:** Introduced `OperationalMetadata` model (`text_length`, `word_count`, `has_order_id_pattern`); classifier constructs metadata from validated text and logs only structural metrics; `test_rule_5_operational_metadata_logging` verifies no raw message leakage
   - **Trade-off:** Added intermediate model layer vs. flat output — chosen for privacy compliance and separation of concerns
+- **Issue:** Transition from keyword heuristics to LLM structured classification
+  - **Goal:** Interpret semantic intent across diverse customer query phrasings while returning a structured schema
+  - **Solution:** Integrated gpt-4o-mini using OpenAI's structured output interface (`response_format=LLMTicketClassification`). Enforced type-safe Pydantic response parsing for category, confidence, extracted order_id, and step-by-step reasoning via `LLMTicketClassification` model and `classify_ticket_with_llm()` engine; integration test suite (`tests/test_llm_classifier.py`) validates semantic variations
+  - **Trade-off:** API dependency and cost vs. improved semantic coverage — chosen for handling implicit/idiomatic customer phrasings that hard-coded rules miss
 
 ---
 

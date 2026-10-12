@@ -47,3 +47,23 @@ class TicketClassification(BaseModel):
     needs_human_review: bool = False
     assumptions: list[str] = Field(default_factory=list)
     metadata: OperationalMetadata
+
+
+class LLMTicketClassification(BaseModel):
+    """Schema enforced on the LLM output via structured function calling."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    category: TicketCategory = Field(
+        ..., description="The primary semantic category of the ticket."
+    )
+    confidence: float = Field(
+        ..., ge=0.0, le=1.0, description="Confidence score between 0.0 and 1.0."
+    )
+    order_id: str | None = Field(
+        default=None,
+        description="Extracted order ID (numeric digits only), if mentioned.",
+    )
+    reasoning: str = Field(
+        ..., description="Brief 1-sentence explanation of why this category was chosen."
+    )
