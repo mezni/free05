@@ -1,4 +1,3 @@
-import json
 from ai_agent.classifier import classify_ticket
 
 

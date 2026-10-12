@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Issue:** Module import failure — `ai-agent` package name conflict prevented `from ai_agent.runner import run_pipeline`
   - **Goal:** Resolve ModuleNotFoundError and enable `uv run python main.py` to work
   - **Solution:** Renamed `src/ai-agent` → `src/ai_agent`, updated `pyproject.toml` name field, and fixed Hatchling package discovery config
+- **Issue:** Incoming payloads contained unexpected keys, missing required fields, or invalid empty string values, causing unhandled runtime exceptions
+  - **Goal:** Ensure raw incoming payload dictionaries are reliably validated, sanitized, and typed before entering the agent's execution pipeline
+  - **Solution:** Introduced `RawTicketInput` using Pydantic with `extra="ignore"` to strip unexpected keys, added custom field validators to reject empty/whitespace-only input strings, and implemented unit test coverage (`test_contract.py`) for schema validation failures
 
 ---
 

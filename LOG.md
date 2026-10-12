@@ -30,3 +30,9 @@ My order #4821 has not arrived.
   "order_id": "4821",
   "needs_order_lookup": true
 }
+
+### Enforce Strict Data Contracts with Pydantic
+- **Goal:** Ensure raw incoming payload dictionaries are reliably validated, sanitized, and typed before entering the agent's execution pipeline.
+- **Problem:** Incoming payloads contained unexpected dictionary keys, missing required fields, or invalid empty string values, leading to unhandled runtime exceptions inside downstream domain logic.
+- **Solution:** Introduced `RawTicketInput` using Pydantic with `extra="ignore"` to strip unexpected keys, added custom field validators to reject empty/whitespace-only input strings, and implemented unit test coverage (`test_contract.py`) for schema validation failures.
+- **Trade-off:** Pydantic v2 strict mode vs. flexibility — chosen for runtime safety and clear error messages.
