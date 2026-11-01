@@ -142,3 +142,46 @@ Step 4 — Implement RefundRequest and RefundDecision.
 **Trade-offs:**
 - RefundRequest does not validate order-item ownership or available refundable quantity; that requires the order and refund history and will be handled by application/policy services.
 - RefundDecision records policy requirements but does not perform approval or payment execution.
+
+
+## Step 5: Deterministic Refund Policy Engine
+
+**Goal:** Evaluate refund requests against explicit business policies without relying on an LLM.
+
+**Problem:** Refund eligibility, refundable balance, evidence requirements, and approval thresholds must be consistent and auditable.
+
+**Solution:**
+- Added configurable return-window and supervisor-approval thresholds.
+- Implemented checks for order/request ownership, item eligibility, quantity, delivery status, and return-window compliance.
+- Deducted previously refunded amounts from the requested item balance.
+- Routed cancelled orders and damaged-item requests to human review.
+- Required supervisor approval for calculated amounts strictly greater than CAD 100.
+- Added unit tests for policy boundaries and review paths.
+
+**Trade-offs:**
+- Policy evaluation is deterministic and easy to test, but policy configuration is currently code-based.
+- Prior refunded amount is supplied by the caller; a later application service will retrieve authoritative refund history.
+- Damaged-item review remains a human decision even when evidence has been verified.
+- The engine calculates eligibility and requirements only; it does not approve or execute payments.
+
+
+## Step 5: Deterministic Refund Policy Engine
+
+**Goal:** Evaluate refund requests against explicit business policies without relying on an LLM.
+
+**Problem:** Refund eligibility, refundable balance, evidence requirements, and approval thresholds must be consistent and auditable.
+
+**Solution:**
+- Added configurable return-window and supervisor-approval thresholds.
+- Implemented checks for order/request ownership, item eligibility, quantity, delivery status, and return-window compliance.
+- Deducted previously refunded amounts from the requested item balance.
+- Routed cancelled orders and damaged-item requests to human review.
+- Required supervisor approval for calculated amounts strictly greater than CAD 100.
+- Added unit tests for policy boundaries and review paths.
+
+**Trade-offs:**
+- Policy evaluation is deterministic and easy to test, but policy configuration is currently code-based.
+- Prior refunded amount is supplied by the caller; a later application service will retrieve authoritative refund history.
+- Damaged-item review remains a human decision even when evidence has been verified.
+- The engine calculates eligibility and requirements only; it does not approve or execute payments.
+
