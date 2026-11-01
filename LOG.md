@@ -185,3 +185,20 @@ Step 4 — Implement RefundRequest and RefundDecision.
 - Damaged-item review remains a human decision even when evidence has been verified.
 - The engine calculates eligibility and requirements only; it does not approve or execute payments.
 
+## Step 6: Application-Layer Refund Service
+
+**Goal:** Coordinate refund evaluation while keeping the domain independent of persistence and API frameworks.
+
+**Problem:** The policy engine needs order and refund-history data, but should not know how those records are retrieved.
+
+**Solution:**
+- Added OrderRepository and RefundHistoryRepository protocols.
+- Added RefundApplicationService to load order data and refund history, invoke the policy engine, and return a structured result.
+- Added OrderNotFoundError for missing orders.
+- Added unit tests using in-memory fake repositories.
+
+**Trade-offs:**
+- Repository protocols define the persistence boundary without selecting a database.
+- Refund history is treated as authoritative input from the repository.
+- This use case evaluates requests but does not yet persist requests, approvals, or payment transactions.
+
