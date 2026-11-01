@@ -244,11 +244,13 @@ from langgraph.types import interrupt
 
 
 def review_evidence(state: RefundAgentState):
-    decision = interrupt({
-        "type": "evidence_review",
-        "refund_id": state["refund_id"],
-        "evidence_reference": state["evidence_reference"],
-    })
+    decision = interrupt(
+        {
+            "type": "evidence_review",
+            "refund_id": state["refund_id"],
+            "evidence_reference": state["evidence_reference"],
+        }
+    )
 
     return {
         "evidence_status": decision["status"],
@@ -262,12 +264,14 @@ from langgraph.types import interrupt
 
 
 def request_approval(state: RefundAgentState):
-    decision = interrupt({
-        "type": "refund_approval",
-        "refund_id": state["refund_id"],
-        "amount": state["policy_decision"]["approved_amount"],
-        "reason": state["policy_decision"]["decision_reason"],
-    })
+    decision = interrupt(
+        {
+            "type": "refund_approval",
+            "refund_id": state["refund_id"],
+            "amount": state["policy_decision"]["approved_amount"],
+            "reason": state["policy_decision"]["decision_reason"],
+        }
+    )
 
     return {
         "approval_status": decision["status"],
