@@ -86,3 +86,41 @@ invalid currency arithmetic.
 **Next Step**
 
 Step 3 — Implement core domain entities: Customer, Order, and OrderItem.
+
+### Step 3: Implement Customer, Order, and OrderItem
+
+**Goal**
+
+Create validated domain entities for customers and orders.
+
+**Problem**
+
+Refund policies need reliable representations of customer ownership,
+order status, order items, quantities, prices, and delivery dates.
+
+**Solution**
+
+- Added Customer with normalized email and customer tier.
+- Added OrderItem with quantity validation and subtotal calculation.
+- Added Order with status, delivery timestamp, item collection,
+  total calculation, and item lookup.
+- Added OrderStatus and CustomerTier enums.
+- Added unit tests for entity validation and calculations.
+
+**Trade-offs**
+
+- Email validation is intentionally basic for the synthetic-data prototype.
+- Orders use immutable tuples of items.
+- All items in an order must use the same currency.
+- Product eligibility is represented as a basic flag; detailed
+  eligibility rules will be implemented in the policy engine.
+
+**Validation**
+
+- [ ] `uv run pytest tests/unit/test_money.py tests/unit/test_entities.py`
+- [ ] `uv run ruff check .`
+- [ ] `uv run ruff format --check .`
+
+**Next Step**
+
+Step 4 — Implement RefundRequest and RefundDecision.
