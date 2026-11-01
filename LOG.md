@@ -124,3 +124,21 @@ order status, order items, quantities, prices, and delivery dates.
 **Next Step**
 
 Step 4 — Implement RefundRequest and RefundDecision.
+
+
+## Step 4: RefundRequest and RefundDecision
+
+**Goal:** Represent a customer's refund request and the policy evaluation result as separate domain models.
+
+**Problem:** A refund request is not proof of eligibility, and policy eligibility is not financial approval.
+
+**Solution:**
+- Added RefundReason, RefundStatus, and PolicyOutcome enums.
+- Added RefundRequest entity with IDs, requested quantity, reason, note, timestamp, and status.
+- Added RefundDecision value object with policy outcome, calculated amount, policy references, evidence requirement, and approval requirement.
+- Added validation for quantity, customer note, timezone-aware timestamps, decision explanations, policy IDs, and calculated amounts.
+- Added unit tests for valid and invalid domain states.
+
+**Trade-offs:**
+- RefundRequest does not validate order-item ownership or available refundable quantity; that requires the order and refund history and will be handled by application/policy services.
+- RefundDecision records policy requirements but does not perform approval or payment execution.
