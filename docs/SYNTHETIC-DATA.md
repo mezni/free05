@@ -1,0 +1,128 @@
+# Synthetic Data Specification — bss-core
+
+**Status:** Draft · **Last Updated:** 2026-11-08
+**Sources:** `PRD.md` §4 (Success Metrics), `DATA-MODEL.md`, `EXPERIENCE.md`
+**Scope:** MVP demo/exhibition dataset and integration fixtures.
+
+---
+
+## 1. Purpose
+
+Produce a reproducible, realistic dataset that exercises every entity and flow end to end so
+the application can be demonstrated without production data. The dataset is a **success
+metric**, not a nice-to-have.
+
+---
+
+## 2. Volume targets
+
+| Entity | Target range | Notes |
+|--------|--------------|-------|
+| Customer | 50–100 | Tier distribution weighted Standard 60% / Gold 30% / Enterprise 10% |
+| Product | 30–60 | Multiple categories; some inactive |
+| Inventory | 1 per product | Mix of in-stock, low-stock, out-of-stock |
+| Order | 200–500 | Distributed across all customers; full status coverage |
+| OrderItem | 1–5 per order | 1–3 is typical; ~15% of orders have 4–5 |
+| Shipment | 1 per completed order | All shipment statuses represented |
+| BillingRecord | 1–3 per order | Charge always; Refund/Credit where returns occurred |
+| ReturnRequest | 10–20% of order items | Spread across all statuses |
+| User | 10–20 | Every role represented; 1–2 inactive |
+| AuditLog | derived | One entry per refund and per user mutation |
+
+---
+
+## 3. Constraints and realism
+
+- **Referential integrity:** every `customer_id`, `order_id`, `product_id`, `order_item_id`
+  resolves; no orphan rows.
+- **Lineage:** each order has items, and completed/returned orders have shipments, billing,
+  and (where applicable) returns — matching `DATA-MODEL.md` relationships.
+- **Money:** `unit_price > 0`, `amount > 0`, `line_total = quantity × unit_price`,
+  `order.total_amount = Σ line_total`. Use Decimal, 2 decimal places, `USD` default.
+- **Status realism:** honour transition rules:
+  - Order: `Processing → Completed → Returned | Cancelled`.
+  - Shipment: `Label Created → In Transit → Out for Delivery → Delivered`.
+  - Return: `Submitted → Approved | Rejected → Completed`.
+- **Temporal realism:** `created_at <= updated_at`; orders precede shipments; shipments
+  precede delivery; refunds follow the original charge. Use ISO 8601 UTC.
+- **Return policy:** items outside the 30-day window (configurable) are not eligible.
+- **Security:** payment methods are synthetic masks only (e.g. "Visa ending in 4242"). Never
+  generate or store a full PAN, password, or token. User passwords are pre-hashed with
+  bcrypt/Argon2; the seed password may be a known demo value documented in the generator,
+  never a real credential.
+
+---
+
+## 4. Determinism
+
+- A single `--seed` (default `20261108`) drives all randomness.
+- Same seed + same generator version ⇒ byte-identical output (sorted keys, stable ordering,
+  fixed locale/timezone).
+- A `--manifest` file records generator version, seed, row counts, and a SHA-256 of each
+  output file.
+
+---
+
+## 5. Output contract
+
+```text
+docs/prototype/generator/output/
+  customers.json
+  products.json
+  inventory.json
+  orders.json
+  order_items.json
+  shipments.json
+  billing_records.json
+  return_requests.json
+  users.json
+  audit_logs.json
+  manifest.json
+```
+
+Each JSON file is an array of plain objects using the field names in `DATA-MODEL.md` and
+plain scalar types (UUID strings, ISO 8601 strings, decimal strings). The generator lives at
+`generator/synthetic_data_generator.py` (per `ARCHITECTURE-SPINE.md` Structural Seed) and is
+invoked as:
+
+```bash
+python -m generator.synthetic_data_generator --seed 20261108 --out docs/prototype/generator/output
+```
+
+---
+
+## 6. Distribution profiles
+
+| Dimension | Profile |
+|-----------|---------|
+| Customer tiers | Standard 60%, Gold 30%, Enterprise 10% |
+| Order status | Processing 20%, Completed 55%, Returned 15%, Cancelled 10% |
+| Shipment status | Delivered 60%, Out for Delivery 15%, In Transit 20%, Label Created 5% |
+| Billing type | Charge 75%, Refund 20%, Credit 5% |
+| Billing status | Completed 80%, Pending 15%, Failed 5% |
+| User roles | Viewer/Operator/Manager/Administrator/User Manager, ≥1 each |
+| Names/emails | Faker with a fixed locale; emails unique within customers and within users |
+
+---
+
+## 7. Acceptance criteria
+
+- [ ] Counts fall within the ranges in §2.
+- [ ] No referential-integrity violations (validated by a checker script).
+- [ ] All money and total invariants hold.
+- [ ] All statuses are valid enum values and follow transition rules.
+- [ ] No full PAN, plaintext password, token, or real PII present.
+- [ ] Re-running with the same seed reproduces identical files (hash match).
+- [ ] `manifest.json` row counts match the emitted files.
+- [ ] Dataset loads into SQLite via the repository layer without errors.
+
+---
+
+## 8. Validation checker (planned)
+
+A `--verify` mode should assert §7 and exit non-zero on failure, suitable for CI. It must run
+without network access.
+
+---
+
+*Document Version: 1.0 · Generated by validation pass on 2026-11-08.*
