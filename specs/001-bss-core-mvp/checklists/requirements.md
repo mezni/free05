@@ -13,7 +13,7 @@ not modify markers.
 
 ## Completeness
 
-- [ ] CHK001 Every functional requirement FR-01…FR-32 is present, uniquely numbered, and contiguous in `spec.md`
+- [ ] CHK001 Every functional requirement FR-01…FR-34 is present, uniquely numbered, and contiguous in `spec.md`
 - [ ] CHK002 Every requirement has at least one user story or acceptance scenario that exercises it
 - [ ] CHK003 Every requirement has a traceability row in `docs/TRACEABILITY-MATRIX.md`
 - [ ] CHK004 All six architecture decisions AD-1…AD-6 are reflected in `plan.md` and `research.md`

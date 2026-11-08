@@ -42,9 +42,9 @@
 
 | Method | Path | Scope | FR | Description |
 |--------|------|-------|----|-------------|
-| POST | `/auth/login` | Public | §8.4 | Exchange credentials for access token |
-| POST | `/auth/refresh` | Public (valid refresh token) | §8.4 | Rotate access token |
-| POST | `/auth/logout` | `Read` | §8.4 | Invalidate refresh token |
+| POST | `/auth/login` | Public | FR-34 | Exchange credentials for access token |
+| POST | `/auth/refresh` | Public (valid refresh token) | FR-34 | Rotate access token |
+| POST | `/auth/logout` | Valid token | FR-34 | Invalidate refresh token |
 
 **Login request**
 ```json
@@ -66,7 +66,7 @@ Policy: 24-hour tokens; 5 failed attempts → 30-minute lockout; passwords verif
 | POST | `/customers` | `Write` | FR-01 | Create customer |
 | GET | `/customers/{id}` | `Read` | FR-01, FR-21 | Get profile (non-sensitive fields) |
 | PATCH | `/customers/{id}` | `Write` | FR-01, FR-02 | Update profile / tier |
-| DELETE | `/customers/{id}` | `Write` | FR-01 | Delete customer |
+| DELETE | `/customers/{id}` | `Write` | FR-01 | Delete customer; `409 linked_records_exist` when linked records exist |
 | GET | `/customers/{id}/billing` | `Read` | FR-04, FR-20, FR-24 | Billing history (masked) |
 | GET | `/customers/{id}/orders` | `Read` | FR-22 | Order history with line items |
 
@@ -77,7 +77,7 @@ Policy: 24-hour tokens; 5 failed attempts → 30-minute lockout; passwords verif
   "tier": "Gold","preferences": {},"created_at": "2026-11-08T10:00:00Z","updated_at": "2026-11-08T10:00:00Z"
 }
 ```
-Rules: `email` unique and format-valid; `tier` ∈ {`Standard`,`Gold`,`Enterprise`}.
+Rules: `email` unique and format-valid; `tier` ∈ {`Standard`,`Gold`,`Enterprise`}. Deletion is a hard delete only when the customer has no linked orders, billing records, shipments, or audit entries; otherwise return `409 linked_records_exist`.
 
 ---
 
@@ -152,7 +152,7 @@ Carriers: `FedEx`, `UPS`, `DHL`. `tracking_number` unique. MVP uses a port-backe
 | POST | `/billing` | `Financial Write` | FR-16, FR-17 | Create billing record (Charge/Refund/Credit) |
 | GET | `/billing/{id}` | `Read` | FR-18 | Transaction detail + timestamp |
 | POST | `/billing/refunds` | `Financial Write` | FR-27 | Issue refund/credit (audited) |
-| GET | `/audit-logs` | `User Management` | AD-5 | Query audit entries (see note) |
+| GET | `/audit-logs` | `User Management` | FR-33 | Query audit entries (paginated, filterable) |
 
 **Billing object**
 ```json
@@ -163,7 +163,7 @@ Carriers: `FedEx`, `UPS`, `DHL`. `tracking_number` unique. MVP uses a port-backe
   "created_at": "2026-11-08T12:00:00Z"
 }
 ```
-Rules: `amount > 0`; **never** store or return a full PAN (AD-4); customer balance is derived `sum(Charge) − sum(Refund) − sum(Credit)`.
+Rules: `amount > 0`; **never** store or return a full PAN (AD-4); customer balance is derived `sum(Charge) − sum(Refund) − sum(Credit)`. `status` is set synchronously from the billing port result: `Completed` on success, `Failed` on error; `Pending` is unused in the MVP.
 
 **Issue refund request**
 ```json
@@ -171,7 +171,7 @@ Rules: `amount > 0`; **never** store or return a full PAN (AD-4); customer balan
 ```
 Every `issue_refund` writes an append-only audit entry (actor, operation, entity, amount, reason, outcome, correlation_id).
 
-> Note: `/audit-logs` is not yet defined by a PRD FR. It is proposed under `User Management` (Administrator) to satisfy the "audit trail visible/searchable" goal in `EXPERIENCE.md`. Confirm in `AUTHZ-MATRIX.md` before implementation.
+> `/audit-logs` is defined by FR-33 and guarded by `User Management` (User Manager or Administrator). Supports `?actor=`, `?operation=`, `?entity_type=`, `?from=`, `?to=`, `?limit=`, and `?cursor=`; returns newest-first with `{"items": [...], "next_cursor": ...}`.
 
 ---
 

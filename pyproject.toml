@@ -1,0 +1,37 @@
+[project]
+name = "bss-core"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.100",
+    "uvicorn[standard]>=0.27.0",
+    "streamlit>=1.30",
+    "sqlalchemy>=2.0.29",
+    "pydantic>=2.5.2",
+    "pyjwt[cryptography]>=2.8.0",
+    "bcrypt>=4.0.1",
+    "argon2-cffi>=23.1.0",
+    "alembic>=1.13.0",
+    "pytest>=8.0.0",
+    "Faker>=24.0.0",
+]
+
+[build-system]
+requires-setuptools = true
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "I", "A", "B", "C", "D", "N", "N8", "P", "S"]
+ignore = [".git/", "docs/", "specs/", "*.pyc", "__pycache__/"]
+
+[tool.black]
+line-length = 88
+
+[tool.pytest-options]
+testpaths = ["tests/"]
+addopts = "--cov=domain --cov-report=term-missing --cov-fail-under=90"
+
+[tool.coverage.run]
+branch = true
+run = ["-m", "pytest"]

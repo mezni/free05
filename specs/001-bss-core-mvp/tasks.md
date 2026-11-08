@@ -1,3 +1,5 @@
+# tasks.md
+
 ---
 
 description: "Task list for bss-core Support Application (MVP)"
@@ -5,45 +7,59 @@ description: "Task list for bss-core Support Application (MVP)"
 
 # Tasks: bss-core Support Application (MVP)
 
-**Input**: Design documents from `/specs/001-bss-core-mvp/`
+**Input**: Design documents from `/home/dali/WORK/bss-core/specs/001-bss-core-mvp/`
 
-**Prerequisites**: `plan.md`, `spec.md`, `research.md`, `data-model.md`, `contracts/openapi.yaml`
+**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/ (openapi.yaml)
 
-**Tests**: Included because the constitution mandates test-first development and 100% domain
-coverage (Principle IV, NFR-12).
+**Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification. The constitution mandates 100% domain coverage; test tasks are marked `[P]` and optional.
 
-**Organization**: Tasks are grouped by user story (epic) so each can be implemented and tested
-independently.
+**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: US1…US5 (see `spec.md`)
-- Exact file paths are included
+- **[Story]**: Which user story this task belongs to (e.g., [US1], [US2], [US3], [US4], [US5])
+- Include exact file paths in descriptions
 
 ## Path Conventions
 
-Single project at repository root: `domain/`, `application/`, `infrastructure/`, `api/`,
-`streamlit/`, `generator/`, `tests/`, `docs/`, `specs/`.
+- **Single project** at repository root: `domain/`, `application/`, `infrastructure/`, `api/`, `streamlit/`, `generator/`, `tests/`, `docs/`, `specs/`.
+- Paths shown assume this structure; adjust if your plan differs.
 
----
+<!--
+  ============================================================================
+
+  IMPORTANT: The tasks below are GENERATED for the bss-core MVP feature.
+  They map user stories from `specs/001-bss-core-mvp/spec.md`,
+  entities from `specs/001-bss-core-mvp/data-model.md`,
+  contracts from `specs/001-bss-core-mvp/contracts/openapi.yaml`,
+  and the implementation plan from `specs/001-bss-core-mvp/plan.md`.
+
+  DO NOT keep these sample tasks in the generated tasks.md file.
+  The /speckit.tasks command must replace these with actual tasks based on:
+  - User stories from spec.md (with their priorities P1, P2, P3...)
+  - Feature requirements from plan.md
+  - Entities from data-model.md
+  - Endpoints from contracts/
+  - The /speckit.tasks command MUST replace these with actual tasks.
+
+  ============================================================================
+-->
 
 ## Phase 1: Setup (Shared Infrastructure)
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create the project directory structure (`domain/ports`, `domain/services`, `application/use_cases`, `infrastructure/{repositories,db,carriers,billing,auth}`, `api`, `streamlit`, `generator`, `tests/{domain,application,infrastructure,api,performance}`)
-- [ ] T002 [P] Create dependency manifest (`pyproject.toml` or `requirements.txt`) with FastAPI, Streamlit, SQLAlchemy, Pydantic, PyJWT, bcrypt/argon2-cffi, Alembic, pytest, Faker
-- [ ] T003 [P] Configure linting, formatting, type checks, and pytest with coverage thresholds (domain 100%, project >= 90%)
+- [ ] T001 Create the project directory structure (`domain/`, `application/`, `infrastructure/`, `api/`, `streamlit/`, `generator/`, `tests/`) per `plan.md`
+- [ ] T002 [P] Initialize Python packaging and dependency manifest (`pyproject.toml`) with FastAPI, Streamlit, SQLAlchemy, Pydantic, PyJWT, bcrypt/argon2-cffi, Alembic, pytest, Faker
+- [ ] T003 [P] Configure linting (`ruff`), formatting (`black`), type checks (`pytype`), and pytest with coverage thresholds (domain 100%, project >= 90%)
 - [ ] T004 [P] Configure environment settings with defaults in `infrastructure/config.py` (`BSS_DATABASE_URL`, `BSS_JWT_SECRET`, `BSS_JWT_TTL_SECONDS`, `BSS_RETURN_WINDOW_DAYS`, `BSS_MAX_QTY_PER_LINE`)
-
----
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Core infrastructure that MUST exist before any user story
+**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
-**⚠️ CRITICAL**: No user story work starts until this phase is complete
+**⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
 - [ ] T005 Implement all plain-Python entities in `domain/entities.py` (Customer, Product, Inventory, Order, OrderItem, Shipment, BillingRecord, ReturnRequest, User, AuditLog)
 - [ ] T006 Implement invariants and state machines in `domain/policies.py` (order/shipment/return transitions, return window, money rules)
@@ -59,17 +75,13 @@ Single project at repository root: `domain/`, `application/`, `infrastructure/`,
 - [ ] T016 [P] Write the import-guard test proving `domain/` imports no FastAPI/Streamlit/SQLAlchemy/carrier SDK in `tests/domain/test_layer_guard.py`
 - [ ] T017 [P] Write the repository contract test scaffold in `tests/infrastructure/test_repositories.py`
 
-**Checkpoint**: Foundation ready — user stories can start in parallel.
-
----
-
 ## Phase 3: User Story 1 — Manage Customer Accounts (Priority: P1) 🎯 MVP
 
 **Goal**: Customer CRUD, tier assignment, search/filter, profile and history reads.
 
 **Independent Test**: Create → update tier → search → filter → read profile and billing history.
 
-### Tests for User Story 1 ⚠️ (write first, must fail)
+### Tests for User Story 1 (OPTIONAL ⚠️)
 
 - [ ] T018 [P] [US1] Domain tests for customer create/read/update/delete and unique email in `tests/domain/test_customer.py`
 - [ ] T019 [P] [US1] API tests for `/customers` search, filter, and pagination in `tests/api/test_customers.py`
@@ -81,6 +93,7 @@ Single project at repository root: `domain/`, `application/`, `infrastructure/`,
 - [ ] T022 [US1] Implement customer routes in `api/routes/customers.py`
 - [ ] T023 [US1] Implement customer list/detail screens in `streamlit/pages/customers.py`
 - [ ] T024 [US1] Implement read endpoints for customer billing history and orders (FR-04, FR-20, FR-22 read side)
+- [ ] T025 [US1] Add customer tier enforcement (Standard/Gold/Enterprise) per NFR-07
 
 **Checkpoint**: Customer management works independently and is demoable.
 
@@ -90,10 +103,9 @@ Single project at repository root: `domain/`, `application/`, `infrastructure/`,
 
 **Goal**: Order creation, item management, totals, status transitions, eligibility, idempotent returns.
 
-**Independent Test**: Create order → verify total → add/remove item → transition status →
-check eligibility → submit return twice with the same idempotency key.
+**Independent Test**: Create order → verify total → add/remove item → transition status → check eligibility → submit return twice with same idempotency key.
 
-### Tests for User Story 2 ⚠️
+### Tests for User Story 2 (OPTIONAL ⚠️)
 
 - [ ] T025 [P] [US2] Domain tests for order creation, item add/remove, and derived totals in `tests/domain/test_order.py`
 - [ ] T026 [P] [US2] Domain tests for order status transitions (valid and invalid) in `tests/domain/test_order_status.py`
@@ -102,7 +114,7 @@ check eligibility → submit return twice with the same idempotency key.
 
 ### Implementation for User Story 2
 
-- [ ] T029 [US2] Implement order use cases (create, add/remove item, total) in `application/use_cases/orders.py` (FR-06, FR-07, FR-10)
+- [ ] T029 [US2] Implement order use cases (create, add/remove item, total) in `application/use_cases/orders.py` (FR-06…10)
 - [ ] T030 [US2] Implement status transition use case in `application/use_cases/order_status.py` (FR-08)
 - [ ] T031 [US2] Implement return-eligibility service and mark-eligibility use case in `domain/services/eligibility.py` and `application/use_cases/return_eligibility.py` (FR-09, FR-25)
 - [ ] T032 [US2] Implement return request + idempotency + label generation in `application/use_cases/returns.py` (FR-26)
@@ -117,10 +129,9 @@ check eligibility → submit return twice with the same idempotency key.
 
 **Goal**: Billing records, masked payment data, derived balance, audited refunds.
 
-**Independent Test**: Create charge → read masked → issue refund → verify one audit entry; force
-audit failure and confirm the refund is blocked.
+**Independent Test**: Create charge → read masked → issue refund → verify one audit entry; force audit failure and confirm the refund is blocked.
 
-### Tests for User Story 3 ⚠️
+### Tests for User Story 3 (OPTIONAL ⚠️)
 
 - [ ] T035 [P] [US3] Domain tests for billing invariants (`amount > 0`), types, and derived balance in `tests/domain/test_billing.py`
 - [ ] T036 [P] [US3] Tests proving refunds write exactly one audit entry and that audit failure blocks the refund in `tests/application/test_issue_refund.py`
@@ -142,21 +153,20 @@ audit failure and confirm the refund is blocked.
 
 **Goal**: Shipment creation, carrier assignment, tracking, status, ETA.
 
-**Independent Test**: Create shipment with mock carrier → set ETA → advance to Delivered →
-track by number.
+**Independent Test**: Create shipment with mock carrier → set ETA → advance to Delivered → track by number.
 
-### Tests for User Story 4 ⚠️
+### Tests for User Story 4 (OPTIONAL ⚠️)
 
-- [ ] T043 [P] [US4] Domain tests for shipment creation, unique tracking number, and status transitions in `tests/domain/test_shipment.py`
-- [ ] T044 [P] [US4] Mock carrier adapter contract tests (deterministic states, graceful degradation) in `tests/infrastructure/test_carrier_adapter.py`
-- [ ] T045 [P] [US4] Authorization matrix tests for `/shipments` routes in `tests/api/test_shipments_authz.py`
+- [ ] T039 [P] [US4] Domain tests for shipment creation, unique tracking number, and status transitions in `tests/domain/test_shipment.py`
+- [ ] T040 [P] [US4] Mock carrier adapter contract tests (deterministic states, graceful degradation) in `tests/infrastructure/test_carrier_adapter.py`
+- [ ] T041 [P] [US4] Authorization matrix tests for `/shipments` routes in `tests/api/test_shipments_authz.py`
 
 ### Implementation for User Story 4
 
-- [ ] T046 [US4] Implement shipment use cases in `application/use_cases/shipments.py` (FR-11, FR-12, FR-14, FR-15)
-- [ ] T047 [US4] Implement the port-backed mock carrier adapter in `infrastructure/carriers/mock_adapter.py` (FR-13, FR-23)
-- [ ] T048 [US4] Implement shipment and tracking routes in `api/routes/shipments.py`
-- [ ] T049 [US4] Implement shipment screens in `streamlit/pages/shipments.py`
+- [ ] T042 [US4] Implement shipment use cases in `application/use_cases/shipments.py` (FR-11…15, FR-23)
+- [ ] T043 [US4] Implement the port-backed mock carrier adapter in `infrastructure/carriers/mock_adapter.py` (FR-13, FR-23)
+- [ ] T044 [US4] Implement shipment and tracking routes in `api/routes/shipments.py`
+- [ ] T045 [US4] Implement shipment screens in `streamlit/pages/shipments.py`
 
 **Checkpoint**: Shipments and tracking work independently.
 
@@ -168,31 +178,33 @@ track by number.
 
 **Independent Test**: Create user → change role → toggle inactive → search → verify audit entries.
 
-### Tests for User Story 5 ⚠️
+### Tests for User Story 5 (OPTIONAL ⚠️)
 
-- [ ] T050 [P] [US5] Domain tests for user CRUD, unique email, and role scope expansion in `tests/domain/test_user.py`
-- [ ] T051 [P] [US5] Tests proving user mutations are audited and `User Management` is orthogonal to `Write` in `tests/application/test_manage_user.py`
-- [ ] T052 [P] [US5] Authorization matrix tests for every `/users` route in `tests/api/test_users_authz.py`
+- [ ] T045 [P] [US5] Domain tests for user CRUD, unique email, and role scope expansion in `tests/domain/test_user.py`
+- [ ] T046 [P] [US5] Tests proving user mutations are audited and `User Management` is orthogonal to `Write` in `tests/application/test_manage_user.py`
+- [ ] T047 [P] [US5] Authorization matrix tests for every `/users` route in `tests/api/test_users_authz.py`
 
 ### Implementation for User Story 5
 
-- [ ] T053 [US5] Implement user use cases (CRUD, role, permissions, status, search) in `application/use_cases/users.py` (FR-28…32)
-- [ ] T054 [US5] Implement user routes in `api/routes/users.py`
-- [ ] T055 [US5] Implement user administration screens in `streamlit/pages/users.py`
+- [ ] T048 [US5] Implement user use cases (CRUD, role, permissions, status, search) in `application/use_cases/users.py` (FR-28…32)
+- [ ] T049 [US5] Implement user routes in `api/routes/users.py`
+- [ ] T050 [US5] Implement user administration screens in `streamlit/pages/users.py`
 
 **Checkpoint**: All five user stories are independently functional.
 
 ---
 
-## Phase 8: Polish & Cross-Cutting Concerns
+## Phase N: Polish & Cross-Cutting Concerns
 
-- [ ] T056 [P] Implement the deterministic synthetic data generator and verifier in `generator/synthetic_data_generator.py` (see `docs/SYNTHETIC-DATA.md`)
-- [ ] T057 [P] Add release performance smoke tests for API p95 and DB lookup latency in `tests/performance/`
-- [ ] T058 [P] Run accessibility checks (WCAG AA contrast, keyboard, screen reader) on the Streamlit UI
-- [ ] T059 Update `docs/TRACEABILITY-MATRIX.md` and `docs/sprint-status.yaml` story statuses
-- [ ] T060 Run the `quickstart.md` validation end to end
-- [ ] T061 Final security review: no PAN, secrets, or plaintext passwords in code, logs, or fixtures
-- [ ] T062 Verify migration upgrade → seed → downgrade → upgrade with zero data loss
+**Purpose**: Improvements that affect multiple user stories
+
+- [ ] T048 [P] Implement the deterministic synthetic data generator and verifier in `generator/synthetic_data_generator.py` (see `docs/SYNTHETIC-DATA.md`)
+- [ ] T049 [P] Add release performance smoke tests for API p95 and DB lookup latency in `tests/performance/`
+- [ ] T050 [P] Run accessibility checks (WCAG AA contrast, keyboard, screen reader) on the Streamlit UI
+- [ ] T051 Update `docs/TRACEABILITY-MATRIX.md` and `docs/sprint-status.yaml` story statuses
+- [ ] T052 Run the `quickstart.md` validation end to end
+- [ ] T053 Final security review: no PAN, secrets, or plaintext passwords in code, logs, or fixtures
+- [ ] T054 Verify migration upgrade → seed → downgrade → upgrade with zero data loss
 
 ---
 
@@ -200,34 +212,34 @@ track by number.
 
 ### Phase Dependencies
 
-- **Setup (Phase 1)**: no dependencies.
-- **Foundational (Phase 2)**: depends on Setup; blocks all user stories.
-- **User Stories (Phases 3–7)**: depend on Foundational; may run in parallel.
-- **Polish (Phase 8)**: depends on the desired stories being complete.
+- **Setup (Phase 1)**: No dependencies - can start immediately.
+- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories.
+- **User Stories (Phases 3–7)**: All depend on Foundational phase completion.
+  - User stories can then proceed in parallel (if staffed).
+  - Or sequentially in priority order (P1 → P2 → P3 → P4 → P5).
+- **Polish (Final Phase)**: Depends on all desired user stories being complete.
 
 ### User Story Dependencies
 
-- **US1 (P1)**: none after foundation.
-- **US2 (P2)**: needs US1 data (customers); can use seeded customers.
-- **US3 (P3)**: needs US1/US2 data; can use seeded records.
-- **US4 (P4)**: needs US2 orders; can use seeded orders.
-- **US5 (P5)**: independent of business stories; needs the auth foundation.
+- **US1 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories.
+- **US2 (P2)**: Can start after Foundational (Phase 2) - Needs US1 data (customers); can use seeded customers.
+- **US3 (P3)**: Can start after Foundational (Phase 2) - Needs US1/US2 data; can use seeded records.
+- **US4 (P4)**: Can start after Foundational (Phase 2) - Needs US2 orders; can use seeded orders.
+- **US5 (P5)**: Independent of business stories; needs the auth foundation.
 
-### Within Each Story
+### Within Each User Story
 
-- Tests are written first and MUST fail before implementation.
+- Tests (if included) MUST be written first and MUST FAIL before implementation (constitution Principle IV).
 - Entities/policies → use cases → API routes → UI.
 - Each story ends at its checkpoint before the next priority.
 
 ### Parallel Opportunities
 
 - All `[P]` Setup and Foundational tasks can run concurrently.
-- Once foundation is complete, US1–US5 can be staffed in parallel (respecting data dependencies).
+- Once Foundation is complete, US1–US5 can be staffed in parallel (respecting data dependencies).
 - Within a story, `[P]` test files and independent entity/use-case files can run concurrently.
 
----
-
-## Parallel Example: User Story 1
+**Parallel Example: User Story 1**
 
 ```bash
 # Tests first (must fail):
@@ -247,9 +259,9 @@ Task: "Customer screens in streamlit/pages/customers.py"
 
 ### MVP First (User Story 1 Only)
 
-1. Complete Phase 1 (Setup).
-2. Complete Phase 2 (Foundational) — blocks everything.
-3. Complete Phase 3 (US1 Customer).
+1. Complete Phase 1: Setup.
+2. Complete Phase 2: Foundational - blocks everything.
+3. Complete Phase 3: US1 Customer.
 4. **STOP and VALIDATE** US1 independently.
 5. Demo/deploy the customer MVP.
 
@@ -272,7 +284,4 @@ Task: "Customer screens in streamlit/pages/customers.py"
 - Tests MUST fail before implementation (constitution Principle IV).
 - Commit after each task or logical group.
 - Do not introduce deferred features (CQRS, event sourcing, GraphQL, multi-tenancy).
-
----
-
-*Tasks Version: 1.0 · Generated for Spec Kit on 2026-11-08.*
+- The prototype in `docs/prototype/` is the reference implementation for the production Streamlit app in `streamlit/`.

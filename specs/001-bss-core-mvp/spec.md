@@ -14,6 +14,16 @@ architecture, plus system user administration and role-based access control."
 `docs/AUTHZ-MATRIX.md`, `docs/EXPERIENCE.md`, `docs/DESIGN.md`, `docs/epics.md`,
 `.specify/memory/constitution.md`.
 
+## Clarifications
+
+### Session 2026-11-08
+
+- Q: Should the MVP expose a read API for the audit log, and if so under which scope? → A: Yes — `GET /audit-logs` is included and guarded by `User Management`.
+- Q: When a customer has linked orders, billing records, or audit entries, what should DELETE /customers/{id} do? → A: Reject with `409 linked_records_exist`.
+- Q: Should customer create, update, and delete mutations be audit-logged, or should auditing stay limited to refunds and user-management mutations? → A: No customer auditing; AD-5 stays limited to refunds and user-management mutations.
+- Q: Which authentication endpoints should the MVP expose? → A: Login, refresh, and logout (`POST /auth/login`, `/auth/refresh`, `/auth/logout`).
+- Q: How should BillingRecord.status (Pending/Completed/Failed) be set in the MVP? → A: Synchronously from the billing port result: `Completed` on success, `Failed` on error; `Pending` is unused.
+
 ---
 
 ## User Scenarios & Testing *(mandatory)*
@@ -140,12 +150,15 @@ status to inactive, search by email, and verify an audit entry per mutation.
    cumulative scopes.
 3. **Given** a caller without `User Management`, **When** they call any `/users` route,
    **Then** the system returns `403` even if they hold `Write`.
+4. **Given** a User Manager, **When** they query `GET /audit-logs` filtered by actor, operation,
+   entity, or date range, **Then** matching audit entries are returned newest-first with pagination.
 
 ---
 
 ### Edge Cases
 
 - Duplicate email (customer or user) → `409 duplicate_email`.
+- Deleting a customer with linked orders, billing records, shipments, or audit entries → `409 linked_records_exist`.
 - Duplicate tracking number, RMA number, or idempotency key.
 - Invalid status transitions for orders, shipments, and returns.
 - Return requested outside the configured window or for a cancelled/returned order.
@@ -167,9 +180,13 @@ status to inactive, search by email, and verify an audit entry per mutation.
 
 ### Functional Requirements
 
+**Authentication**
+
+- **FR-34**: System MUST provide login, refresh, and logout endpoints (`POST /auth/login`, `POST /auth/refresh`, `POST /auth/logout`); access tokens expire after 24 hours and logout invalidates the refresh token.
+
 **Customer Management**
 
-- **FR-01**: System MUST create, read, update, and delete customers.
+- **FR-01**: System MUST create, read, update, and delete customers. A customer with linked orders, billing records, shipments, or audit entries MUST NOT be hard-deleted; the request returns `409 linked_records_exist`.
 - **FR-02**: System MUST assign a tier of `Standard`, `Gold`, or `Enterprise`.
 - **FR-03**: System MUST search customers by name or email.
 - **FR-04**: System MUST show a customer's billing history.
@@ -198,7 +215,7 @@ status to inactive, search by email, and verify an audit entry per mutation.
 
 **Billing Management**
 
-- **FR-16**: System MUST create billing records of type `Charge`, `Refund`, or `Credit`.
+- **FR-16**: System MUST create billing records of type `Charge`, `Refund`, or `Credit`. Status is set synchronously from the billing port result (`Completed` on success, `Failed` on error); `Pending` is unused in the MVP.
 - **FR-17**: System MUST link billing records to customers (and orders where applicable).
 - **FR-18**: System MUST track transaction timestamps.
 - **FR-19**: System MUST store payment method masks only (e.g. "Visa ending in 4242").
@@ -213,6 +230,7 @@ status to inactive, search by email, and verify an audit entry per mutation.
 - **FR-30**: System MUST manage user permissions scoped by tool catalog.
 - **FR-31**: System MUST toggle user status active/inactive.
 - **FR-32**: System MUST search users by name or email.
+- **FR-33**: System MUST expose a paginated, filterable audit-log read API (`GET /audit-logs`) under `User Management`.
 
 ### Authorization Requirements
 
@@ -231,7 +249,7 @@ status to inactive, search by email, and verify an audit entry per mutation.
 - **NFR-08**: The system MUST never store full card numbers.
 - **NFR-09**: The system MUST validate input on all endpoints.
 - **NFR-10**: Passwords MUST be hashed with bcrypt or Argon2.
-- **NFR-11**: `issue_refund` and user-management mutations MUST be audit-logged.
+- **NFR-11**: `issue_refund` and user-management mutations MUST be audit-logged; customer mutations are not audited in the MVP.
 - **NFR-12**: Domain entities MUST have 100% unit-test coverage.
 - **NFR-13**: Public modules/functions MUST have docstrings.
 - **NFR-14**: Layers MUST have clear separation of concerns.
@@ -279,6 +297,7 @@ status to inactive, search by email, and verify an audit entry per mutation.
 - Customer balance is derived from billing records; no mutable balance column.
 - Quantity rule is `>= 1`; any per-line cap is configurable (`MAX_QTY_PER_LINE`).
 - Tool endpoints are not rate-limited in the MVP.
+- Customer create/update/delete are not audit-logged; AD-5 audit scope is refunds and user-management mutations only.
 - Payment data is synthetic in all demo/test datasets.
 
 ## Out of Scope (deferred)

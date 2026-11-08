@@ -34,7 +34,7 @@ Existing solutions are either too heavy (enterprise ERP) or too fragmented (sepa
 ### 5.1 Customer Management (Customer Context)
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| FR-01 | Create, read, update, delete customers | High |
+| FR-01 | Create, read, update, delete customers; deletion returns `409 linked_records_exist` when linked records exist | High |
 | FR-02 | Assign tier: Standard, Gold, Enterprise | High |
 | FR-03 | Search customers by name/email | Medium |
 | FR-04 | View customer billing history | Medium |
@@ -66,7 +66,7 @@ Existing solutions are either too heavy (enterprise ERP) or too fragmented (sepa
 ### 5.4 Billing Management (Billing Context)
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| FR-16 | Create billing records (Charge, Refund, Credit) | High |
+| FR-16 | Create billing records (Charge, Refund, Credit); status set synchronously from the billing port (Completed/Failed) | High |
 | FR-17 | Link billing records to customers | High |
 | FR-18 | Track transaction timestamps | Medium |
 | FR-19 | Store payment method masks (e.g., "Visa ending in 4242") | Medium |
@@ -82,6 +82,12 @@ Existing solutions are either too heavy (enterprise ERP) or too fragmented (sepa
 | FR-30 | Manage user permissions scoped by tool catalog | High |
 | FR-31 | User status: active/inactive toggle | Low |
 | FR-32 | Search users by name/email | Medium |
+| FR-33 | Query the append-only audit log (paginated, filterable) | Medium |
+
+### 5.6 Authentication (System Context)
+| ID | Requirement | Priority |
+|----|-------------|----------|
+| FR-34 | Provide login, refresh, and logout endpoints; 24-hour access tokens; logout invalidates the refresh token | High |
 
 ## 6. Non-Functional Requirements
 
@@ -133,7 +139,7 @@ Creates Shipment → Processes Billing Records
 - Must be compatible with FastAPI and Streamlit
 - Domain layer cannot import FastAPI, Streamlit, or tool catalog implementations
 - Must support Python 3.10+
-- Functional requirements (FR-21 to FR-32) define capabilities in the domain layer; implementations (tool catalog calls, database operations, API endpoints) reside in the application/adapter layer
+- Functional requirements (FR-21 to FR-33) define capabilities in the domain layer; implementations (tool catalog calls, database operations, API endpoints) reside in the application/adapter layer. FR-34 (authentication endpoints) is implemented by the auth adapter.
 - `User Management` scope is orthogonal to `Read`/`Write`/`Financial Write` scopes; role assignments require `User Management` scope explicitly. Operator/Manager roles can perform user CRUD only under `User Management` scope, not via general `Write` scope
 
 ### 8.2 Business Constraints
@@ -152,7 +158,7 @@ Creates Shipment → Processes Billing Records
 #### Authentication (authN)
 - Users must authenticate via API key or JWT token in `Authorization: Bearer <token>` header
 - Token validation performed by FastAPI dependency `get_current_user`
-- Session management: tokens valid for 24 hours, refreshable via `/auth/refresh`
+- Session management: tokens valid for 24 hours, refreshable via `/auth/refresh`; logout via `/auth/logout` invalidates the refresh token
 - Password policy: minimum 8 characters, mix of upper/lowercase and digits
 - Account lockout: 5 failed attempts, 30-minute lockout period
 - Passwords are hashed using bcrypt/Argon2, never stored in plain text (security best practice)
@@ -181,7 +187,8 @@ The canonical, complete FR → scope → minimum-role matrix is maintained in **
 - FR-09 (mark return eligibility) is a mutation and requires `Write`.
 - FR-16 is billing-record creation (`Financial Write`); issuing refunds is FR-27.
 - FR-25 (return eligibility) is owned by Epic 2 and is not duplicated elsewhere.
-- FR-31 (user status toggle) and FR-32 (search users) require `User Management`.
+- FR-31 (user status toggle), FR-32 (search users), and FR-33 (audit-log read) require `User Management`.
+- FR-34 (login/refresh/logout) is public for login and refresh; logout requires a valid token.
 
 Role → granted-scope summary:
 
@@ -200,12 +207,17 @@ Role → granted-scope summary:
 - No concurrent order modification conflicts expected
 - Customer tiers are predefined (Standard, Gold, Enterprise)
 - Tool catalog authorization will be enforced via FastAPI dependencies
+- Customer create/update/delete are not audit-logged; audit scope is refunds and user-management mutations
 
 ### 9.2 Decisions (resolved)
 - Tool endpoints include rate limiting: **No**
 - Email validation strictness for `get_customer_account`: **Not enforced beyond format**
 - Shipping cost calculation integrated with `get_delivery_status`: **No**
 - Audit log storage strategy for `issue_refund`: **SQLite audit table (append-only), see DATA-MODEL.md**
+- Audit-log read API: **`GET /audit-logs` under `User Management` (FR-33)**
+- Customer deletion with linked records: **Rejected with `409 linked_records_exist` (no cascade, no soft delete in MVP)**
+- Authentication endpoints: **Login, refresh, and logout (FR-34)**
+- Billing status: **Set synchronously from the billing port result; `Pending` unused in the MVP**
 
 ## 10. Future Considerations
 

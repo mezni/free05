@@ -23,7 +23,7 @@
 | `Read` | `get_customer_account`, `get_order_history`, `get_delivery_status`, `get_billing_history`, `check_refund_eligibility` |
 | `Write` | customer/order/shipment/return mutations; `create_return_request`; billing record creation |
 | `Financial Write` | `issue_refund`, monetary credit execution |
-| `User Management` | `create_user`, `update_user`, `delete_user`, `assign_role`, `set_user_status`, `search_users` |
+| `User Management` | `create_user`, `update_user`, `delete_user`, `assign_role`, `set_user_status`, `search_users`, `read_audit_log` |
 
 ## 3. Functional Requirement → Scope → Minimum Role
 
@@ -61,8 +61,10 @@
 | FR-30 | Manage permissions by tool catalog | Write | `User Management` | User Manager | |
 | FR-31 | Toggle user active/inactive | Write | `User Management` | Administrator | **Decision**: use `User Management`, not generic `Write` (resolves PRD conflict) |
 | FR-32 | Search users | Read | `User Management` | User Manager | **Decision**: user directory is sensitive; do not expose under plain `Read` |
+| FR-33 | Query audit log | Read | `User Management` | User Manager | Append-only; paginated and filterable; Administrator also allowed |
+| FR-34 | Login / refresh / logout | AuthN | Public (login, refresh); valid token (logout) | Anonymous / any authenticated | 24-hour access token; logout invalidates refresh token |
 
-> FR IDs are now contiguous (FR-01 through FR-32). FR-33/FR-34 were renumbered to FR-31/FR-32 to close the gap; all references were updated.
+> FR-01 through FR-34 are contiguous. FR-33 (audit read) and FR-34 (auth endpoints) were added on 2026-11-08; the earlier FR-33/FR-34 were renumbered to FR-31/FR-32 and remain so.
 
 ## 4. Resolved Decisions
 
@@ -72,6 +74,8 @@
 4. **FR-25 lives only in Epic 2.** Remove the duplicate Story 4.6 from Epic 4.
 5. **FR-31 uses `User Management`.** Generic `Write` is insufficient for user lifecycle changes.
 6. **FR-32 uses `User Management`.** User search is an administrative capability, not a general read.
+7. **FR-33 uses `User Management`.** Audit entries contain actor and financial context; do not expose under plain `Read`.
+8. **FR-34 login and refresh are public**, while logout requires a valid token. These endpoints are outside the four-scope business matrix.
 
 ## 5. HTTP Semantics
 
@@ -80,3 +84,4 @@
 | Missing/invalid token | `401 Unauthorized` |
 | Valid token, missing scope | `403 Forbidden` with `{"error": "insufficient_scope", "message": "...", "required_scope": "..."}` |
 | Scope present, resource not found | `404 Not Found` |
+| Delete blocked by linked records | `409 Conflict` with `{"error": "linked_records_exist", "message": "..."}` |

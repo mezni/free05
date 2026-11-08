@@ -44,8 +44,10 @@
 | FR-30 | Manage permissions | E5 / 5.3 | `User Management` | `PATCH /users/{id}` | User permissions | T-USER-PERM |
 | FR-31 | Toggle user status | E5 / 5.4 | `User Management` | `PATCH /users/{id}/status` | User.status, AuditLog | T-USER-STATUS |
 | FR-32 | Search users | E5 / 5.5 | `User Management` | `GET /users?q=` | User | T-USER-SEARCH |
+| FR-33 | Query audit log | E5 / cross-cutting | `User Management` | `GET /audit-logs` | AuditLog | T-AUDIT-READ |
+| FR-34 | Login / refresh / logout | Foundational / auth | Public (login, refresh); valid token (logout) | `/auth/login`, `/auth/refresh`, `/auth/logout` | User | T-AUTH-LIFECYCLE |
 
-**Coverage:** 32/32 FRs mapped. All FRs are owned by exactly one epic (FR-25 belongs to E2 only).
+**Coverage:** 34/34 FRs mapped. FR-01…FR-32 are owned by epics (FR-25 belongs to E2 only); FR-33 is cross-cutting under E5; FR-34 is foundational auth.
 
 ---
 
