@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from domain.entities import Order, OrderStatus
-from domain.policies import can_transition_order_status
+from domain.policies import order_transition_allowed
 
 
 def transition_to_processing(order: Order) -> Order:
@@ -48,4 +48,4 @@ def can_transition_to(
 
     FR-08: Validates status transitions.
     """
-    return can_transition_order_status(order.status, new_status)
+    return order_transition_allowed(order.status, new_status)

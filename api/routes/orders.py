@@ -5,7 +5,7 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Status
+from fastapi import APIRouter, Depends, HTTPException
 from typing import Optional
 
 from application.use_cases.orders import (

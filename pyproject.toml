@@ -17,8 +17,8 @@ dependencies = [
 ]
 
 [build-system]
-requires-setuptools = true
-build-backend = "setuptools.backends._legacy:_Backend"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [tool.ruff]
 line-length = 88
@@ -35,3 +35,6 @@ addopts = "--cov=domain --cov-report=term-missing --cov-fail-under=90"
 [tool.coverage.run]
 branch = true
 run = ["-m", "pytest"]
+
+[tool.setuptools.packages.find]
+include = ['bss-core', 'bss-core.*']

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Status
+from fastapi import APIRouter, Depends, HTTPException
 from typing import Optional
 
 from application.use_cases.returns import create_return_request, submit_return, process_idempotent_return

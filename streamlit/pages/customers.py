@@ -18,7 +18,7 @@ st.header("Create Customer")
 with st.form("customer_create_form", clear_on_submit=True):
     name = st.text_input("Name *", placeholder="e.g., Acme Corp")
     email = st.text_input("Email *", placeholder="e.g., contact@acme.com")
-    tier = st.selectbox("Tier", [t.value for t in st.session_state.get("tiers", [ "Standard", "Gold", "Enterprise" ])])
+    tier = st.selectbox("Tier", ["Standard", "Gold", "Enterprise"])
     submitted = st.form_submit_button("Create Customer")
 
     if submitted:

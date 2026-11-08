@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Status
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Optional
 
 from application.use_cases.users import (
@@ -16,7 +16,7 @@ from application.use_cases.users import (
 )
 from api.deps import get_current_user_with_scope
 from domain.entities import User, UserRole, UserStatus
-from domain.enumerations import Outcome
+from domain.entities import Outcome
 
 router = APIRouter(prefix="/users", tags=["users"])
 

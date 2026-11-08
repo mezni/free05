@@ -5,16 +5,8 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Status
-from application.use_cases.billing import (
-    create_billing_record,
-    list_billing_records,
-    issue_refund,
-    mask_payment_method,
-    get_balance,
-    mask_sensitive_data,
-    format_currency_amount,
-)
+from fastapi import APIRouter, Depends, HTTPException
+from infrastructure.billing.adapter import mask_sensitive_data
 from application.use_cases.refunds import process_refund, process_refund_with_audit_check, calculate_customer_balance
 from infrastructure.repositories.audit import audit_repository
 from api.deps import get_current_user_with_scope

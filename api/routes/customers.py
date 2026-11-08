@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Status
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 
 from application.use_cases.customers import (

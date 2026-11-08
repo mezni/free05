@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 from typing import Optional, Dict, Any
 
-from domain.enumerations import Carrier
+from domain.entities import Carrier
 
 
 class MockCarrierAdapter:
