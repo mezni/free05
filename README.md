@@ -1,52 +1,57 @@
-# bss-core
+# bss-core — Support Application (MVP)
 
-Support application for customers, orders, shipments, and billing. Built with a
-hexagonal (ports‑and‑adapters) architecture on Python 3.10+, FastAPI, Streamlit,
-SQLAlchemy 2.0, Pydantic 2.5+, PyJWT, bcrypt/argon2, Alembic, pytest 8+,
-Faker 24+.
+A hexagonal (ports-and-adapters) Python support application managing customers,
+orders, shipments, and billing with clean DDD and Clean Code architecture.
 
-## Spec-driven development
-
-All requirements, data model, API contracts, and tasks are defined under
-`specs/001-bss-core-mvp/` using the Spec Kit workflow (`/speckit.specify`,
-`/speckit.plan`, `/speckit.tasks`).  Artifacts include:
-
-- `spec.md` – user stories, acceptance criteria, FR‑01…FR‑34
-- `plan.md` – technical context, constitution check, project structure
-- `research.md` – Phase‑0 decisions R1‑R16 and open questions
-- `data-model.md` – 10 entities, invariants, state machines
-- `contracts/openapi.yaml` – OpenAPI 3.1 with `x‑required‑scope`
-- `quickstart.md` – install / configure / run / test
-- `checklists/requirements.md` – reviewer‑owned quality checklist
-- `tasks.md` – 63 dependency‑ordered, test‑first tasks (T001‑T054)
+**Feature**: `001-bss-core-mvp` · **Branch**: `001-bss-core-mvp` · **Date**: 2026-11-08
 
 ## Architecture
 
-- Hexagonal (ports‑and‑adapters), DDD‑inspired
-- Domain layer: plain Python, no framework imports
-- Application: use‑case orchestration
-- Infrastructure: SQLAlchemy adapters, JWT auth, carrier/billing ports
-- API: FastAPI with scope‑based authorization (`Read`, `Write`,
-  `Financial Write`, `User Management`)
-- UI: Streamlit CSR console (prototype in `docs/prototype/` is the reference
-  implementation for the production `streamlit/` app)
+| Layer | Tech | Key Traits |
+|-------|------|------------|
+| **Domain** | Plain Python | Framework-free, 100% unit-test coverage |
+| **Application** | Use-case orchestration | Pure business rules, no framework deps |
+| **Infrastructure** | SQLAlchemy, JWT, mock carriers | SQLite → PostgreSQL migration path |
+| **API** | FastAPI | Scope-based auth: Read / Write / Financial Write / User Management |
+| **UI** | Streamlit | CSR console, 5 user-story pages |
 
-## Quick start
+**Constitution**: `.specify/memory/constitution.md` v1.0.0 (2026-11-08) — all 5 principles pass.
+
+## Quick Start
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install "fastapi>=0.100" "uvicorn" "streamlit>=1.30" "sqlalchemy>=2.0" \
-            "pydantic>=2.5" "pyjwt>=2.8" "bcrypt>=4.0" "argon2-cffi>=23.1" \
-            "alembic>=1.13" "pytest>=8.0" "faker>=24"
-alembic upgrade head
-uvicorn api.main:app --reload
-streamlit run streamlit/app.py
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e .          # installs deps from pyproject.toml
+uvicorn api.main:app --reload    # FastAPI on http://localhost:8000
+streamlit run streamlit/app.py     # CSR console on http://localhost:8501
 ```
 
-## Status
+## Pages (sidebar nav)
 
-- **34 functional requirements** (FR‑01…FR‑34), 17 non‑functional requirements
-- **5 epics**, 27 stories (5/7/5/5/5)
-- **Constitution**: `.specify/memory/constitution.md` v1.0.0 (2026‑11‑08)
-- **Spec Kit artifacts**: ready under `specs/001-bss-core-mvp/`
-- **Tasks**: generated and validated (63 tasks, 5 clarification questions answered)
+| Page | User Story | Priority |
+|------|-----------|----------|
+| **Customers** | US1 — Manage Customer Accounts | P1 |
+| **Orders** | US2 — Process Orders and Returns | P2 |
+| **Billing** | US3 — Handle Billing and Refunds | P3 |
+| **Shipments** | US4 — Ship and Track Deliveries | P4 |
+| **Users** | US5 — Administer Users and Roles | P5 |
+
+## Specs & Artifacts
+
+All specification live under `specs/001-bss-core-mvp/`:
+
+- `spec.md` — 34 functional requirements, 5 user stories
+- `plan.md` — Technical context, constitution check
+- `research.md` — Phase-0 decisions R1–R16
+- `data-model.md` — 10 entities, invariants, state machines
+- `quickstart.md` — Install/configure/run/test guide
+- `checklists/requirements.md` — Reviewer-owned quality checklist
+- `tasks.md` — 63 dependency-ordered, test-first tasks (T001–T054)
+
+## Constitution Check ✅
+
+All 5 principles pass: hexagonal architecture, scope-based auth, security/ audit, test-first, simplicity/ observability.
+
+## License
+
+MIT
