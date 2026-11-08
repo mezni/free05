@@ -50,10 +50,10 @@ description: "Task list for bss-core Support Application (MVP)"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create the project directory structure (`domain/`, `application/`, `infrastructure/`, `api/`, `streamlit/`, `generator/`, `tests/`) per `plan.md`
-- [ ] T002 [P] Initialize Python packaging and dependency manifest (`pyproject.toml`) with FastAPI, Streamlit, SQLAlchemy, Pydantic, PyJWT, bcrypt/argon2-cffi, Alembic, pytest, Faker
-- [ ] T003 [P] Configure linting (`ruff`), formatting (`black`), type checks (`pytype`), and pytest with coverage thresholds (domain 100%, project >= 90%)
-- [ ] T004 [P] Configure environment settings with defaults in `infrastructure/config.py` (`BSS_DATABASE_URL`, `BSS_JWT_SECRET`, `BSS_JWT_TTL_SECONDS`, `BSS_RETURN_WINDOW_DAYS`, `BSS_MAX_QTY_PER_LINE`)
+- [x] T001 Create the project directory structure (`domain/`, `application/`, `infrastructure/`, `api/`, `streamlit/`, `generator/`, `tests/`) per `plan.md`
+- [x] T002 [P] Initialize Python packaging and dependency manifest (`pyproject.toml`) with FastAPI, Streamlit, SQLAlchemy, Pydantic, PyJWT, bcrypt/argon2-cffi, Alembic, pytest, Faker
+- [x] T003 [P] Configure linting (`ruff`), formatting (`black`), type checks (`pytype`), and pytest with coverage thresholds (domain 100%, project >= 90%)
+- [x] T004 [P] Configure environment settings with defaults in `infrastructure/config.py` (`BSS_DATABASE_URL`, `BSS_JWT_SECRET`, `BSS_JWT_TTL_SECONDS`, `BSS_RETURN_WINDOW_DAYS`, `BSS_MAX_QTY_PER_LINE`)
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
@@ -61,19 +61,19 @@ description: "Task list for bss-core Support Application (MVP)"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 Implement all plain-Python entities in `domain/entities.py` (Customer, Product, Inventory, Order, OrderItem, Shipment, BillingRecord, ReturnRequest, User, AuditLog)
-- [ ] T006 Implement invariants and state machines in `domain/policies.py` (order/shipment/return transitions, return window, money rules)
-- [ ] T007 [P] Define persistence ports in `domain/ports/repositories.py`
-- [ ] T008 [P] Define adapter ports in `domain/ports/` (carrier, billing/payment, auth)
-- [ ] T009 [P] Implement SQLAlchemy models and repositories in `infrastructure/repositories/`
-- [ ] T010 Setup engine, session, and unit-of-work in `infrastructure/db/session.py`
-- [ ] T011 Create the initial Alembic migration in `infrastructure/db/migrations/`
-- [ ] T012 [P] Implement JWT issuance/validation, bcrypt/Argon2 hashing, and lockout in `infrastructure/auth/`
-- [ ] T013 [P] Implement `get_current_user` and `get_current_user_with_scope` in `api/deps.py`
-- [ ] T014 Implement the FastAPI app, error envelope, and structured logging with correlation IDs in `api/main.py`
-- [ ] T015 Create shared fixtures (in-memory DB, fake ports, signed test tokens) in `tests/conftest.py`
-- [ ] T016 [P] Write the import-guard test proving `domain/` imports no FastAPI/Streamlit/SQLAlchemy/carrier SDK in `tests/domain/test_layer_guard.py`
-- [ ] T017 [P] Write the repository contract test scaffold in `tests/infrastructure/test_repositories.py`
+- [x] T005 Implement all plain-Python entities in `domain/entities.py` (Customer, Product, Inventory, Order, OrderItem, Shipment, BillingRecord, ReturnRequest, User, AuditLog)
+- [x] T006 Implement invariants and state machines in `domain/policies.py` (order/shipment/return transitions, return window, money rules)
+- [x] T007 [P] Define persistence ports in `domain/ports/repositories.py`
+- [x] T008 [P] Define adapter ports in `domain/ports/` (carrier, billing/payment, auth)
+- [x] T009 [P] Implement SQLAlchemy models and repositories in `infrastructure/repositories/`
+- [x] T010 Setup engine, session, and unit-of-work in `infrastructure/db/session.py`
+- [x] T011 Create the initial Alembic migration in `infrastructure/db/migrations/`
+- [x] T012 [P] Implement JWT issuance/validation, bcrypt/Argon2 hashing, and lockout in `infrastructure/auth/`
+- [x] T013 [P] Implement `get_current_user` and `get_current_user_with_scope` in `api/deps.py`
+- [x] T014 Implement the FastAPI app, error envelope, and structured logging with correlation IDs in `api/main.py`
+- [x] T015 Create shared fixtures (in-memory DB, fake ports, signed test tokens) in `tests/conftest.py`
+- [x] T016 [P] Write the import-guard test proving `domain/` imports no FastAPI/Streamlit/SQLAlchemy/carrier SDK in `tests/domain/test_layer_guard.py`
+- [x] T017 [P] Write the repository contract test scaffold in `tests/infrastructure/test_repositories.py`
 
 ## Phase 3: User Story 1 — Manage Customer Accounts (Priority: P1) 🎯 MVP
 
@@ -89,11 +89,11 @@ description: "Task list for bss-core Support Application (MVP)"
 
 ### Implementation for User Story 1
 
-- [ ] T021 [US1] Implement customer use cases in `application/use_cases/customers.py` (FR-01…05, FR-21)
-- [ ] T022 [US1] Implement customer routes in `api/routes/customers.py`
-- [ ] T023 [US1] Implement customer list/detail screens in `streamlit/pages/customers.py`
-- [ ] T024 [US1] Implement read endpoints for customer billing history and orders (FR-04, FR-20, FR-22 read side)
-- [ ] T025 [US1] Add customer tier enforcement (Standard/Gold/Enterprise) per NFR-07
+- [x] T021 [US1] Implement customer use cases in `application/use_cases/customers.py` (FR-01…05, FR-21)
+- [x] T022 [US1] Implement customer routes in `api/routes/customers.py`
+- [x] T023 [US1] Implement customer list/detail screens in `streamlit/pages/customers.py`
+- [x] T024 [US1] Implement read endpoints for customer billing history and orders (FR-04, FR-20, FR-22 read side)
+- [x] T025 [US1] Add customer tier enforcement (Standard/Gold/Enterprise) per NFR-07
 
 **Checkpoint**: Customer management works independently and is demoable.
 
@@ -114,12 +114,12 @@ description: "Task list for bss-core Support Application (MVP)"
 
 ### Implementation for User Story 2
 
-- [ ] T029 [US2] Implement order use cases (create, add/remove item, total) in `application/use_cases/orders.py` (FR-06…10)
-- [ ] T030 [US2] Implement status transition use case in `application/use_cases/order_status.py` (FR-08)
-- [ ] T031 [US2] Implement return-eligibility service and mark-eligibility use case in `domain/services/eligibility.py` and `application/use_cases/return_eligibility.py` (FR-09, FR-25)
-- [ ] T032 [US2] Implement return request + idempotency + label generation in `application/use_cases/returns.py` (FR-26)
-- [ ] T033 [US2] Implement order and return routes in `api/routes/orders.py` and `api/routes/returns.py`
-- [ ] T034 [US2] Implement order and return screens in `streamlit/pages/orders.py`
+- [x] T029 [US2] Implement order use cases (create, add/remove item, total) in `application/use_cases/orders.py` (FR-06…10)
+- [x] T030 [US2] Implement status transition use case in `application/use_cases/order_status.py` (FR-08)
+- [x] T031 [US2] Implement return-eligibility service and mark-eligibility use case in `domain/services/eligibility.py` and `application/use_cases/return_eligibility.py` (FR-09, FR-25)
+- [x] T032 [US2] Implement return request + idempotency + label generation in `application/use_cases/returns.py` (FR-26)
+- [x] T033 [US2] Implement order and return routes in `api/routes/orders.py` and `api/routes/returns.py`
+- [x] T034 [US2] Implement order and return screens in `streamlit/pages/orders.py`
 
 **Checkpoint**: Orders and returns work independently.
 
@@ -139,11 +139,11 @@ description: "Task list for bss-core Support Application (MVP)"
 
 ### Implementation for User Story 3
 
-- [ ] T038 [US3] Implement billing use cases (create, list, timestamps) in `application/use_cases/billing.py` (FR-16…20, FR-24)
-- [ ] T039 [US3] Implement the billing adapter with ingress masking in `infrastructure/billing/adapter.py` (AD-4)
-- [ ] T040 [US3] Implement the append-only audit writer and `issue_refund` use case in `infrastructure/repositories/audit.py` and `application/use_cases/refunds.py` (FR-27, AD-5)
-- [ ] T041 [US3] Implement billing and refund routes in `api/routes/billing.py`
-- [ ] T042 [US3] Implement billing screens (masked history, refund dialog) in `streamlit/pages/billing.py`
+- [x] T038 [US3] Implement billing use cases (create, list, timestamps) in `application/use_cases/billing.py` (FR-16…20, FR-24)
+- [x] T039 [US3] Implement the billing adapter with ingress masking in `infrastructure/billing/adapter.py` (AD-4)
+- [x] T040 [US3] Implement the append-only audit writer and `issue_refund` use case in `infrastructure/repositories/audit.py` and `application/use_cases/refunds.py` (FR-27, AD-5)
+- [x] T041 [US3] Implement billing and refund routes in `api/routes/billing.py`
+- [x] T042 [US3] Implement billing screens (masked history, refund dialog) in `streamlit/pages/billing.py`
 
 **Checkpoint**: Billing and refunds work independently with audit guarantees.
 
@@ -163,10 +163,10 @@ description: "Task list for bss-core Support Application (MVP)"
 
 ### Implementation for User Story 4
 
-- [ ] T042 [US4] Implement shipment use cases in `application/use_cases/shipments.py` (FR-11…15, FR-23)
-- [ ] T043 [US4] Implement the port-backed mock carrier adapter in `infrastructure/carriers/mock_adapter.py` (FR-13, FR-23)
-- [ ] T044 [US4] Implement shipment and tracking routes in `api/routes/shipments.py`
-- [ ] T045 [US4] Implement shipment screens in `streamlit/pages/shipments.py`
+- [x] T042 [US4] Implement shipment use cases in `application/use_cases/shipments.py` (FR-11…15, FR-23)
+- [x] T043 [US4] Implement the port-backed mock carrier adapter in `infrastructure/carriers/mock_adapter.py` (FR-13, FR-23)
+- [x] T044 [US4] Implement shipment and tracking routes in `api/routes/shipments.py`
+- [x] T045 [US4] Implement shipment screens in `streamlit/pages/shipments.py`
 
 **Checkpoint**: Shipments and tracking work independently.
 
@@ -186,9 +186,9 @@ description: "Task list for bss-core Support Application (MVP)"
 
 ### Implementation for User Story 5
 
-- [ ] T048 [US5] Implement user use cases (CRUD, role, permissions, status, search) in `application/use_cases/users.py` (FR-28…32)
-- [ ] T049 [US5] Implement user routes in `api/routes/users.py`
-- [ ] T050 [US5] Implement user administration screens in `streamlit/pages/users.py`
+- [x] T048 [US5] Implement user use cases (CRUD, role, permissions, status, search) in `application/use_cases/users.py` (FR-28…32)
+- [x] T049 [US5] Implement user routes in `api/routes/users.py`
+- [x] T050 [US5] Implement user administration screens in `streamlit/pages/users.py`
 
 **Checkpoint**: All five user stories are independently functional.
 

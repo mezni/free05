@@ -503,3 +503,45 @@ def generate_idempotency_key() -> UUID:
     from uuid import uuid4
 
     return uuid4()
+
+
+class BillingType(str, Enum):
+    """Billing record type enumeration."""
+    Charge = "Charge"
+    Refund = "Refund"
+    Credit = "Credit"
+
+
+class BillingStatus(str, Enum):
+    """Billing status enumeration."""
+    Pending = "Pending"
+    Completed = "Completed"
+    Failed = "Failed"
+
+
+class Outcome(str, Enum):
+    """Outcome enumeration."""
+    success = "success"
+    failure = "failure"
+
+
+class Carrier(str, Enum):
+    """Carrier enumeration."""
+    FedEx = "FedEx"
+    UPS = "UPS"
+    DHL = "DHL"
+
+
+class UserRole(str, Enum):
+    """User role enumeration."""
+    Viewer = "Viewer"
+    Operator = "Operator"
+    Manager = "Manager"
+    Administrator = "Administrator"
+    User_Manager = "User Manager"
+
+
+class UserStatus(str, Enum):
+    """User status enumeration."""
+    active = "active"
+    inactive = "inactive"

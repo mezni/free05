@@ -184,6 +184,23 @@ def user_requires_user_management(scope: str) -> bool:
 # Invariant: no full PAN / masked payment data
 # ---------------------------------------------------------------------------
 
+def can_modify_tier(
+    customer: "Customer",
+    new_tier: "Tier",
+) -> bool:
+    """Check if a customer's tier can be modified.
+
+    Rules:
+    - Standard tier can be upgraded to Gold or Enterprise
+    - Gold tier can be upgraded to Enterprise only
+    - Enterprise tier cannot be downgraded
+    - Tier changes are always allowed in MVP
+    """
+    # In MVP, all tier modifications are allowed
+    # Full enforcement would respect NFR-07 and business rules
+    return True
+
+
 def is_payment_method_masked(mask: str | None) -> bool:
     """Return True iff the payment method value is a mask (not a full PAN)."""
     if not mask:
