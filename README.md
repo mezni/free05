@@ -48,6 +48,29 @@ All specification live under `specs/001-bss-core-mvp/`:
 - `checklists/requirements.md` — Reviewer-owned quality checklist
 - `tasks.md` — 63 dependency-ordered, test-first tasks (T001–T054)
 
+## Synthetic Data Generation
+
+Generate a reproducible demo/exhibition dataset that exercises every entity and flow end-to-end
+(see `docs/SYNTHETIC-DATA.md`):
+
+```bash
+python -m generator.synthetic_data_generator --seed 20261108 \
+  --out docs/prototype/generator/output
+```
+
+This produces a full dataset with referential integrity, realistic status transitions, and
+synthetic PCI-DSS‑compliant payment masks. Output includes JSON files for all entities
+(customers, products, inventory, orders, order items, shipments, billing records, return
+requests, users, audit logs) plus a `manifest.json` recording the seed, row counts, and
+SHA-256 hashes for reproducibility.
+
+- **Seed**: `20261108` (default); same seed ⇒ byte-identical output
+- **Volume targets**: 50–100 customers, 200–500 orders, 1 order item per order typical,
+  1 shipment per completed order, 1–3 billing records per order, 10–20% of items eligible
+  for return, 10–20 users with all roles represented
+- **Constraints**: Referential integrity, Decimal money (2dp USD), valid status transitions,
+  no full PAN/plaintext passwords, temporal realism (created_at <= updated_at)
+
 ## Constitution Check ✅
 
 All 5 principles pass: hexagonal architecture, scope-based auth, security/ audit, test-first, simplicity/ observability.
