@@ -1,4 +1,14 @@
-"""Streamlit application entry point for bss-core Support Application (MVP)."""
+"""Streamlit application entry point for bss-core Support Application (MVP).
+
+Provides sidebar navigation between all 5 user story pages.
+"""
+
+import sys
+import os
+from pathlib import Path
+
+# Ensure the streamlit/ directory is on the path for page imports
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import streamlit as st
 
@@ -7,14 +17,12 @@ st.set_page_config(
     page_title="bss-core Support Application",
     page_icon="🏦",
     layout="wide",
-    initial_sidebar_state="expanded",
 )
 
 # Sidebar navigation
 st.sidebar.title("bss-core MVP")
 st.sidebar.markdown("---")
 
-# Navigation setup
 page = st.sidebar.radio(
     "Navigation",
     ["Customers", "Orders", "Billing", "Shipments", "Users"],
@@ -22,22 +30,21 @@ page = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.caption("bss-core Support Application (MVP)")
-st.sidebar.caption("Built with FastAPI + Streamlit")
+st.sidebar.caption("bss-core Support Application (MVP) · 2026-11-08")
 
 # Route to the selected page
 if page == "Customers":
-    from streamlit.pages.customers import show
+    from pages.customers import show  # noqa: E501, S405
     show()
 elif page == "Orders":
-    from streamlit.pages.orders import show
+    from pages.orders import show  # noqa: E501, S405
     show()
 elif page == "Billing":
-    from streamlit.pages.billing import show
+    from pages.billing import show  # noqa: E501, S405
     show()
 elif page == "Shipments":
-    from streamlit.pages.shipments import show
+    from pages.shipments import show  # noqa: E501, S405
     show()
 elif page == "Users":
-    from streamlit.pages.users import show
+    from pages.users import show  # noqa: E501, S405
     show()
