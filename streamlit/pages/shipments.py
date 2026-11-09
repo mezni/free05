@@ -13,7 +13,7 @@ from application.use_cases.shipments import (
 from infrastructure.carriers.mock_adapter import MockCarrierAdapter
 
 
-st.set_page_config(page_title="Shipments and Tracking", page_icon="🚚")
+# Page config set by main app.py
 
 st.title("🚚 Shipments and Tracking")
 
@@ -89,7 +89,7 @@ if tracking_number:
                         result = adapter.advance_status(tracking_number)
                         if result:
                             st.success(f"Status advanced to: {result['status']}")
-                            st.experimental_rerun()
+                            st.rerun()
                     except Exception as e:
                         st.error(f"Error: {e}")
 
@@ -99,7 +99,7 @@ if tracking_number:
                         result = adapter.advance_status(tracking_number)
                         if result:
                             st.success(f"Status advanced to: {result['status']}")
-                            st.experimental_rerun()
+                            st.rerun()
                     except Exception as e:
                         st.error(f"Error: {e}")
 
@@ -109,7 +109,7 @@ if tracking_number:
                         result = adapter.advance_status(tracking_number)
                         if result:
                             st.success(f"Status advanced to: {result['status']}")
-                            st.experimental_rerun()
+                            st.rerun()
                     except Exception as e:
                         st.error(f"Error: {e}")
 

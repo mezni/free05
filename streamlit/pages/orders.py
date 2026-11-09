@@ -10,9 +10,6 @@ from application.use_cases.returns import create_return_request, submit_return, 
 from application.use_cases.return_eligibility import evaluate_return_eligibility, can_submit_return
 from domain.entities import Order, OrderStatus, ReturnStatus, OrderItem
 
-
-st.set_page_config(page_title="Orders & Returns", page_icon="🛒")
-
 st.title("🛒 Orders and Returns")
 
 st.markdown("---")

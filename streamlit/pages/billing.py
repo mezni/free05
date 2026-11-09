@@ -9,9 +9,6 @@ from application.use_cases.refunds import process_refund, process_refund_with_au
 from infrastructure.repositories.audit import audit_repository
 from domain.entities import Customer, BillingType, BillingStatus
 
-
-st.set_page_config(page_title="Billing and Refunds", page_icon="💰")
-
 st.title("💰 Billing and Refunds")
 
 st.markdown("---")

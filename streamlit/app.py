@@ -7,8 +7,10 @@ import sys
 import os
 from pathlib import Path
 
+# Ensure the project root is on the path for application use cases imports
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 # Ensure the streamlit/ directory is on the path for page imports
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(1, str(Path(__file__).resolve().parent))
 
 import streamlit as st
 

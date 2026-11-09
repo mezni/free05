@@ -13,7 +13,7 @@ orders, shipments, and billing with clean DDD and Clean Code architecture.
 | **Application** | Use-case orchestration | Pure business rules, no framework deps |
 | **Infrastructure** | SQLAlchemy, JWT, mock carriers | SQLite → PostgreSQL migration path |
 | **API** | FastAPI | Scope-based auth: Read / Write / Financial Write / User Management |
-| **UI** | Streamlit | CSR console, 5 user-story pages |
+| **UI** | Streamlit (1.30+) | CSR console, 5 user-story pages |
 
 **Constitution**: `.specify/memory/constitution.md` v1.0.0 (2026-11-08) — all 5 principles pass.
 

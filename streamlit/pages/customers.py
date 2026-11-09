@@ -6,9 +6,6 @@ from typing import Optional
 from application.use_cases.customers import create_customer, update_customer_tier, list_customers, get_customer_profile
 from api.routes.customers import create_customer_route, list_customers_route, get_customer_profile as get_profile_route
 
-
-st.set_page_config(page_title="Customer Management", page_icon="👤")
-
 st.title("👤 Customer Management")
 
 st.markdown("---")

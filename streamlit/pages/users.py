@@ -13,9 +13,6 @@ from application.use_cases.users import (
 )
 from domain.entities import User, UserRole, UserStatus
 
-
-st.set_page_config(page_title="User Administration", page_icon="👥")
-
 st.title("👥 User Administration")
 
 st.markdown("---")
