@@ -1,80 +1,121 @@
-# bss-core — Support Application (MVP)
+# bss-core
 
-A hexagonal (ports-and-adapters) Python support application managing customers,
-orders, shipments, and billing with clean DDD and Clean Code architecture.
+**bss-core** is a Python backend library for a Billing and Subscription System (BSS) support application. It provides domain entities, use cases, and infrastructure for managing customers, products, orders, shipments, returns, billing, and audit logging.
 
-**Feature**: `001-bss-core-mvp` · **Branch**: `001-bss-core-mvp` · **Date**: 2026-11-08
+## Features
 
-## Architecture
+- **Domain entities**: Customer, Product, Inventory, Order, OrderItem, Shipment, BillingRecord, ReturnRequest, User, AuditLog
+- **Enumerations**: Customer tiers, order/shipment/return statuses, carriers, billing types/roles, and more
+- **State machines**: Order, shipment, and return workflow transitions
+- **FastAPI**: REST API with automatic OpenAPI documentation
+- **SQLAlchemy**: ORM and Alembic migrations
+- **Streamlit**: CSR console prototype
+- **Test coverage**: Domain, API, and contract tests
 
-| Layer | Tech | Key Traits |
-|-------|------|------------|
-| **Domain** | Plain Python | Framework-free, 100% unit-test coverage |
-| **Application** | Use-case orchestration | Pure business rules, no framework deps |
-| **Infrastructure** | SQLAlchemy, JWT, mock carriers | SQLite → PostgreSQL migration path |
-| **API** | FastAPI | Scope-based auth: Read / Write / Financial Write / User Management |
-| **UI** | Streamlit (1.30+) | CSR console, 5 user-story pages |
+## Quickstart
 
-**Constitution**: `.specify/memory/constitution.md` v1.0.0 (2026-11-08) — all 5 principles pass.
-
-## Quick Start
+### 1. Install
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e .          # installs deps from pyproject.toml
-uvicorn api.main:app --reload    # FastAPI on http://localhost:8000
-streamlit run streamlit/app.py     # CSR console on http://localhost:8501
+python -m venv .venv
+source .venv/bin/activate
+pip install "fastapi>=0.100" "uvicorn[standard]" "streamlit>=1.30" "sqlalchemy>=2.0" \
+            "pydantic>=2.5" "pyjwt[cryptography]>=2.8" "bcrypt>=4.0" "alembic>=1.13" \
+            "pytest>=8.0" "faker>=24"
 ```
 
-## Pages (sidebar nav)
+### 2. Configure
 
-| Page | User Story | Priority |
-|------|-----------|----------|
-| **Customers** | US1 — Manage Customer Accounts | P1 |
-| **Orders** | US2 — Process Orders and Returns | P2 |
-| **Billing** | US3 — Handle Billing and Refunds | P3 |
-| **Shipments** | US4 — Ship and Track Deliveries | P4 |
-| **Users** | US5 — Administer Users and Roles | P5 |
+Environment variables (sensible defaults for development):
 
-## Specs & Artifacts
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `BSS_DATABASE_URL` | `sqlite:///./bss.db` | Database connection |
+| `BSS_JWT_SECRET` | `dev-only-secret` | Token signing (never commit a real secret) |
+| `BSS_JWT_TTL_SECONDS` | `86400` | Access-token lifetime |
+| `BSS_RETURN_WINDOW_DAYS` | `30` | Return-eligibility policy |
+| `BSS_MAX_QTY_PER_LINE` | unset | Optional per-line quantity cap |
 
-All specification live under `specs/001-bss-core-mvp/`:
-
-- `spec.md` — 34 functional requirements, 5 user stories
-- `plan.md` — Technical context, constitution check
-- `research.md` — Phase-0 decisions R1–R16
-- `data-model.md` — 10 entities, invariants, state machines
-- `quickstart.md` — Install/configure/run/test guide
-- `checklists/requirements.md` — Reviewer-owned quality checklist
-- `tasks.md` — 63 dependency-ordered, test-first tasks (T001–T054)
-
-## Synthetic Data Generation
-
-Generate a reproducible demo/exhibition dataset that exercises every entity and flow end-to-end
-(see `docs/SYNTHETIC-DATA.md`):
+### 3. Migrate and seed
 
 ```bash
-python -m generator.synthetic_data_generator --seed 20261108 \
-  --out docs/prototype/generator/output
+alembic upgrade head
+python -m generator.synthetic_data_generator --seed 20261108 --out generator/output
 ```
 
-This produces a full dataset with referential integrity, realistic status transitions, and
-synthetic PCI-DSS‑compliant payment masks. Output includes JSON files for all entities
-(customers, products, inventory, orders, order items, shipments, billing records, return
-requests, users, audit logs) plus a `manifest.json` recording the seed, row counts, and
-SHA-256 hashes for reproducibility.
+### 4. Run the API
 
-- **Seed**: `20261108` (default); same seed ⇒ byte-identical output
-- **Volume targets**: 50–100 customers, 200–500 orders, 1 order item per order typical,
-  1 shipment per completed order, 1–3 billing records per order, 10–20% of items eligible
-  for return, 10–20 users with all roles represented
-- **Constraints**: Referential integrity, Decimal money (2dp USD), valid status transitions,
-  no full PAN/plaintext passwords, temporal realism (created_at <= updated_at)
+```bash
+uvicorn api.main:app --reload
+# OpenAPI UI: http://127.0.0.1:8000/docs
+```
 
-## Constitution Check ✅
+Smoke check:
 
-All 5 principles pass: hexagonal architecture, scope-based auth, security/ audit, test-first, simplicity/ observability.
+```bash
+curl -s http://127.0.0.1:8000/api/v1/customers \
+  -H "Authorization: Bearer <token>"
+```
+
+### 5. Run the CSR console
+
+```bash
+streamlit run streamlit/app.py
+```
+
+### 6. Run tests
+
+```bash
+pytest -q                       # unit + contract + API
+pytest --cov=domain --cov-report=term-missing
+```
+
+Gates (see `docs/TEST-STRATEGY.md`):
+
+- 100% domain coverage
+- Every route passes the `401/403/404/2xx` authorization matrix
+- Refund and user-mutation audit tests green
+- Migration upgrade/downgrade preserves data
+
+### 7. Validate against the spec
+
+| Check | Command / evidence |
+|-------|--------------------|
+| Every FR has a test | `docs/TRACEABILITY-MATRIX.md` |
+| Authorization matrix | per-route tests derived from `docs/AUTHZ-MATRIX.md` |
+| No full PAN / plaintext password | masking + auth tests |
+| Deterministic demo data | re-run generator with the same seed, compare hashes |
+| Contract matches spec | `diff` of `contracts/openapi.yaml` vs FastAPI `/openapi.json` |
+
+## Project Structure
+
+```
+bss-core/
+├── api/                   # FastAPI application
+├── application/           # Use cases and DTOs
+├── domain/                # Entity definitions and policies
+├── infrastructure/        # SQLAlchemy models, repositories
+├── generator/           # Synthetic data generator
+├── streamlit/           # CSR console UI
+├── tests/               # Test suite
+├── docs/                # Documentation
+└── specs/               # Project specifications
+```
 
 ## License
 
-MIT
+MIT License - Copyright (c) 2026 Mezni
+
+## Dependencies
+
+- fastapi >= 0.100
+- uvicorn[standard] >= 0.27.0
+- streamlit >= 1.30
+- sqlalchemy >= 2.0.29
+- pydantic >= 2.5.2
+- pyjwt[cryptography] >= 2.8.0
+- bcrypt >= 4.0.1
+- argon2-cffi >= 23.1.0
+- alembic >= 1.13.0
+- pytest >= 8.0.0
+- Faker >= 24.0.0
